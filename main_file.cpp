@@ -39,7 +39,9 @@ void error_callback(int error, const char* description) {
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
     initShaders();
-	//************Tutaj umieszczaj kod, który należy wykonać raz, na początku programu************
+	glClearColor(0.0f, 0.0f, 0.0f, 1);
+	glEnable(GL_DEPTH_TEST);
+	// glfwSetKeyCallback(window, key_callback);
 }
 
 
@@ -51,7 +53,22 @@ void freeOpenGLProgram(GLFWwindow* window) {
 
 //Procedura rysująca zawartość sceny
 void drawScene(GLFWwindow* window) {
-	//************Tutaj umieszczaj kod rysujący obraz******************l
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//---
+	glm::mat4 V = glm::lookAt(glm::vec3(0.0f, 1.0f, -5.0f), glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f));
+	spLambert->use();
+	glm::mat4 P = glm::perspective(80.0f * PI / 180.0f, 1.0f, 1.0f, 50.0f);
+	glm::mat4 M = glm::mat4(1.0f);
+	//M = glm::rotate(M, angle, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::scale(M, glm::vec3(1.5f, 0.2f, 2.5f));
+	glUniformMatrix4fv(spLambert->u("P"), 1, false, glm::value_ptr(P));
+	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(V));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M));
+	glUniform4f(spLambert->u("color"), 1.16f, 1.16f, 0.76f, 1.0f);
+	Models::cube.drawSolid();
+	//--
+	glfwSwapBuffers(window);
 }
 
 
@@ -66,7 +83,7 @@ int main(void)
 		exit(EXIT_FAILURE);
 	}
 
-	window = glfwCreateWindow(1800, 950, "Tower Defence", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
+	window = glfwCreateWindow(1800, 950, "Tower Defence", NULL, NULL);  //Utwórz okno.
 	if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
 	{
 		fprintf(stderr, "Nie można utworzyć okna.\n");
