@@ -18,7 +18,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 */
 
 #define GLM_FORCE_RADIANS
-
+#define _USE_MATH_DEFINES
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -26,12 +26,39 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
+#include<cmath>
 #include "constants.h"
 #include "allmodels.h"
 #include "lodepng.h"
 #include "shaderprogram.h"
 
 //Procedura obsługi błędów
+float aspectRatio = 1;
+float camX = 1.0;
+float camY = 3.0;
+float camZ = 0.0;
+float speedCamX = 0;
+float speedCamZ = 0;
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	float radius = 0.10f;
+	if (action == GLFW_PRESS) {
+		if (key == GLFW_KEY_LEFT) speedCamX = radius;
+		if (key == GLFW_KEY_RIGHT) speedCamX = -radius;
+		if (key == GLFW_KEY_UP) speedCamZ = -radius;
+		if (key == GLFW_KEY_DOWN) speedCamZ = radius;
+	}
+	
+	if (action == GLFW_RELEASE) {
+		if (key == GLFW_KEY_LEFT) speedCamX = 0;
+		if (key == GLFW_KEY_RIGHT)speedCamX = 0;
+		if (key == GLFW_KEY_UP) speedCamZ = 0;
+		if (key == GLFW_KEY_DOWN) speedCamZ = 0;
+	}
+	
+}
+
 void error_callback(int error, const char* description) {
 	fputs(description, stderr);
 }
@@ -41,7 +68,7 @@ void initOpenGLProgram(GLFWwindow* window) {
     initShaders();
 	glClearColor(0.0f, 0.0f, 0.0f, 1);
 	glEnable(GL_DEPTH_TEST);
-	// glfwSetKeyCallback(window, key_callback);
+	glfwSetKeyCallback(window, key_callback);
 }
 
 
@@ -52,21 +79,27 @@ void freeOpenGLProgram(GLFWwindow* window) {
 }
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window) {
+void drawScene(GLFWwindow* window, float camRotateX, float camRotateZ) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//---
-	glm::mat4 V = glm::lookAt(glm::vec3(0.0f, 1.0f, -5.0f), glm::vec3(0.0f, 0.0f, 0.0f),
+
+	glm::mat4 V = glm::lookAt(glm::vec3(camX, camY, camZ), glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
+	V = glm::rotate(V, camRotateX, glm::vec3(0.0f, 1.0f, 0.0f));
+	//V = glm::rotate(V, camRotateZ, glm::vec3(1.0f, 0.0f, 0.0f));
 	spLambert->use();
-	glm::mat4 P = glm::perspective(80.0f * PI / 180.0f, 1.0f, 1.0f, 50.0f);
+	glm::mat4 P = glm::perspective(120.0f * PI / 180.0f, aspectRatio, 0.01f, 50.0f);
 	glm::mat4 M = glm::mat4(1.0f);
 	//M = glm::rotate(M, angle, glm::vec3(0.0f, 1.0f, 0.0f));
-	M = glm::scale(M, glm::vec3(1.5f, 0.2f, 2.5f));
+	M = glm::scale(M, glm::vec3(2.5f, 0.2f, 2.5f));
+	//M = glm::rotate(M, angle_y, glm::vec3(1.0f, 0.0f, 0.0f)); //Wylicz macierz modelu
+	//M = glm::rotate(M, angle_x, glm::vec3(0.0f, 1.0f, 0.0f)); //Wylicz macierz modelu
 	glUniformMatrix4fv(spLambert->u("P"), 1, false, glm::value_ptr(P));
 	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(V));
 	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M));
 	glUniform4f(spLambert->u("color"), 1.16f, 1.16f, 0.76f, 1.0f);
 	Models::cube.drawSolid();
+
 	//--
 	glfwSwapBuffers(window);
 }
@@ -100,12 +133,15 @@ int main(void)
 	}
 
 	initOpenGLProgram(window); //Operacje inicjujące
-
-	//Główna pętla
+	float camRotateX = 0;
+	float camRotateZ = 0;
+	glfwSetTime(0);
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
-
-		drawScene(window); //Wykonaj procedurę rysującą
+		float radius = 1.00f;
+		camRotateX += speedCamX * radius;
+		camRotateZ += speedCamZ * radius;
+		drawScene(window, camRotateX, camRotateZ);
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 	}
 
