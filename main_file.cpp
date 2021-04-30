@@ -41,29 +41,29 @@ float camZ = 0.0;
 float speedCamX = 0;
 float speedCamZ = 0;
 float fov = 120;
-
+// bindowanie klawiszy
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	float radius = 0.10f;
 	if (action == GLFW_PRESS) {
 		if (key == GLFW_KEY_LEFT) speedCamX = radius;
 		if (key == GLFW_KEY_RIGHT) speedCamX = -radius;
-		if (key == GLFW_KEY_UP) speedCamZ = -radius;
-		if (key == GLFW_KEY_DOWN) speedCamZ = radius;
+		if (key == GLFW_KEY_UP) speedCamZ = -radius; //potencjalnie do usuniecia
+		if (key == GLFW_KEY_DOWN) speedCamZ = radius; //potencjalnie do usuniecia
 	}
 	
 	if (action == GLFW_RELEASE) {
 		if (key == GLFW_KEY_LEFT) speedCamX = 0;
 		if (key == GLFW_KEY_RIGHT)speedCamX = 0;
-		if (key == GLFW_KEY_UP) speedCamZ = 0;
-		if (key == GLFW_KEY_DOWN) speedCamZ = 0;
+		if (key == GLFW_KEY_UP) speedCamZ = 0; //potencjalnie do usuniecia
+		if (key == GLFW_KEY_DOWN) speedCamZ = 0; //potencjalnie do usuniecia
 	}
 	
 }
-
+// bindowanie scrolla 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	fov -= (float)yoffset;
-	if (fov < 60.0f)
+	fov -= (float)yoffset; //yoffset mowi nam o ile przesunelismy scrolla 
+	if (fov < 60.0f)  // ograniczenia 
 		fov = 60.0f;
 	if (fov > 155.0f)
 		fov = 155.0f;
@@ -78,8 +78,8 @@ void initOpenGLProgram(GLFWwindow* window) {
     initShaders();
 	glClearColor(0.0f, 0.0f, 0.0f, 1);
 	glEnable(GL_DEPTH_TEST);
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetKeyCallback(window, key_callback); // zainicjowanie funkcji
+	glfwSetScrollCallback(window, scroll_callback); // zainicjowanie funkcji
 }
 
 
@@ -90,17 +90,17 @@ void freeOpenGLProgram(GLFWwindow* window) {
 }
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window, float camRotateX, float camRotateZ) {
+void drawScene(GLFWwindow* window, float camRotateX, float camRotateZ) { //raczej mozna usunac camRotateZ 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//---
 
 	glm::mat4 V = glm::lookAt(glm::vec3(camX, camY, camZ), glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
-	V = glm::rotate(V, camRotateX, glm::vec3(0.0f, 1.0f, 0.0f));
+	V = glm::rotate(V, camRotateX, glm::vec3(0.0f, 1.0f, 0.0f)); // tutaj odbywa sie obrot
 	//V = glm::rotate(V, camRotateZ, glm::vec3(1.0f, 0.0f, 0.0f));
 	spLambert->use();
 	//glm::mat4 P = glm::perspective(120.0f * PI / 180.0f, aspectRatio, 0.01f, 50.0f);
-	glm::mat4 P = glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 100.0f);
+	glm::mat4 P = glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 100.0f); // tutaj odbywa sie zoom
 	glm::mat4 M = glm::mat4(1.0f);
 	//M = glm::rotate(M, angle, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::scale(M, glm::vec3(2.5f, 0.2f, 2.5f));
@@ -146,14 +146,14 @@ int main(void)
 
 	initOpenGLProgram(window); //Operacje inicjujące
 	float camRotateX = 0;
-	float camRotateZ = 0;
+	float camRotateZ = 0;  //raczej mozna usunac camRotateZ 
 	glfwSetTime(0);
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
 		float radius = 1.00f;
-		camRotateX += speedCamX * radius;
-		camRotateZ += speedCamZ * radius;
-		drawScene(window, camRotateX, camRotateZ);
+		camRotateX += speedCamX * radius; // o ile zmieniamy rotate
+		camRotateZ += speedCamZ * radius;  //raczej mozna usunac camRotateZ 
+		drawScene(window, camRotateX, camRotateZ);  //raczej mozna usunac camRotateZ 
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 	}
 
