@@ -40,6 +40,7 @@ float camY = 3.0;
 float camZ = 0.0;
 float speedCamX = 0;
 float speedCamZ = 0;
+float fov = 120;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	float radius = 0.10f;
@@ -59,6 +60,15 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	
 }
 
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	fov -= (float)yoffset;
+	if (fov < 60.0f)
+		fov = 60.0f;
+	if (fov > 155.0f)
+		fov = 155.0f;
+}
+
 void error_callback(int error, const char* description) {
 	fputs(description, stderr);
 }
@@ -69,6 +79,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glClearColor(0.0f, 0.0f, 0.0f, 1);
 	glEnable(GL_DEPTH_TEST);
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetScrollCallback(window, scroll_callback);
 }
 
 
@@ -88,7 +99,8 @@ void drawScene(GLFWwindow* window, float camRotateX, float camRotateZ) {
 	V = glm::rotate(V, camRotateX, glm::vec3(0.0f, 1.0f, 0.0f));
 	//V = glm::rotate(V, camRotateZ, glm::vec3(1.0f, 0.0f, 0.0f));
 	spLambert->use();
-	glm::mat4 P = glm::perspective(120.0f * PI / 180.0f, aspectRatio, 0.01f, 50.0f);
+	//glm::mat4 P = glm::perspective(120.0f * PI / 180.0f, aspectRatio, 0.01f, 50.0f);
+	glm::mat4 P = glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 100.0f);
 	glm::mat4 M = glm::mat4(1.0f);
 	//M = glm::rotate(M, angle, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::scale(M, glm::vec3(2.5f, 0.2f, 2.5f));
