@@ -41,6 +41,8 @@ float camZ = 0.0;
 float speedCamX = 0;
 float speedCamZ = 0;
 float fov = 120;
+float camRotateX = 0;
+float camRotateZ = 0;  //raczej mozna usunac camRotateZ 
 // bindowanie klawiszy
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	float radius = 0.10f;
@@ -49,6 +51,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		if (key == GLFW_KEY_RIGHT) speedCamX = -radius;
 		if (key == GLFW_KEY_UP) speedCamZ = -radius; //potencjalnie do usuniecia
 		if (key == GLFW_KEY_DOWN) speedCamZ = radius; //potencjalnie do usuniecia
+		if (key == GLFW_KEY_R) {
+			fov = 120;
+			camRotateX = 0;
+		}
 	}
 	
 	if (action == GLFW_RELEASE) {
@@ -90,7 +96,7 @@ void freeOpenGLProgram(GLFWwindow* window) {
 }
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window, float camRotateX, float camRotateZ) { //raczej mozna usunac camRotateZ 
+void drawScene(GLFWwindow* window) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//---
 
@@ -145,15 +151,14 @@ int main(void)
 	}
 
 	initOpenGLProgram(window); //Operacje inicjujące
-	float camRotateX = 0;
-	float camRotateZ = 0;  //raczej mozna usunac camRotateZ 
+
 	glfwSetTime(0);
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
 		float radius = 1.00f;
 		camRotateX += speedCamX * radius; // o ile zmieniamy rotate
 		camRotateZ += speedCamZ * radius;  //raczej mozna usunac camRotateZ 
-		drawScene(window, camRotateX, camRotateZ);  //raczej mozna usunac camRotateZ 
+		drawScene(window);
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 	}
 
