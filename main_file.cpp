@@ -51,7 +51,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		if (key == GLFW_KEY_RIGHT) speedCamX = -radius;
 		if (key == GLFW_KEY_UP) speedCamZ = -radius; //potencjalnie do usuniecia
 		if (key == GLFW_KEY_DOWN) speedCamZ = radius; //potencjalnie do usuniecia
-		if (key == GLFW_KEY_R) {
+		if (key == GLFW_KEY_R) { //reset ustawień
 			fov = 120;
 			camRotateX = 0;
 		}
