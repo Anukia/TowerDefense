@@ -24,5 +24,8 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "sphere.h"
 #include "teapot.h"
 #include "torus.h"
-
+#include "woodenTowerWatch.h"
+#include "placeForTower.h"
+#include "rock.h"
+#include "tree.h"
 #endif

@@ -33,6 +33,8 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "lodepng.h"
 #include "shaderprogram.h"
 
+//bool turnOffMenu = false; //jesli true, to wychodzimy z menu
+
 //Procedura obsługi błędów
 float aspectRatio = 1;
 float camX = 1.0;
@@ -43,6 +45,7 @@ float speedCamZ = 0;
 float fov = 120;
 float camRotateX = 0;
 float camRotateZ = 0;  //raczej mozna usunac camRotateZ 
+
 // bindowanie klawiszy
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	float radius = 0.10f;
@@ -151,7 +154,9 @@ int main(void)
 	}
 
 	initOpenGLProgram(window); //Operacje inicjujące
+	//while (!glfwWindowShouldClose(window) && !turnOffMenu) { // Menu
 
+	//}
 	glfwSetTime(0);
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
@@ -167,4 +172,5 @@ int main(void)
 	glfwDestroyWindow(window); //Usuń kontekst OpenGL i okno
 	glfwTerminate(); //Zwolnij zasoby zajęte przez GLFW
 	exit(EXIT_SUCCESS);
+
 }
