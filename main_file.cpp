@@ -101,8 +101,7 @@ void freeOpenGLProgram(GLFWwindow* window) {
 //Procedura rysująca zawartość sceny
 void drawScene(GLFWwindow* window) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//---
-
+	// Kamera
 	glm::mat4 V = glm::lookAt(glm::vec3(camX, camY, camZ), glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 	V = glm::rotate(V, camRotateX, glm::vec3(0.0f, 1.0f, 0.0f)); // tutaj odbywa sie obrot
@@ -110,6 +109,9 @@ void drawScene(GLFWwindow* window) {
 	spLambert->use();
 	//glm::mat4 P = glm::perspective(120.0f * PI / 180.0f, aspectRatio, 0.01f, 50.0f);
 	glm::mat4 P = glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 100.0f); // tutaj odbywa sie zoom
+
+	// Podstawa
+
 	glm::mat4 M = glm::mat4(1.0f);
 	//M = glm::rotate(M, angle, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::scale(M, glm::vec3(2.5f, 0.2f, 2.5f));
@@ -121,7 +123,146 @@ void drawScene(GLFWwindow* window) {
 	glUniform4f(spLambert->u("color"), 1.16f, 1.16f, 0.76f, 1.0f);
 	Models::cube.drawSolid();
 
-	//--
+	//Drzewo
+
+	glm::mat4 M1 = M;
+	M1 = glm::rotate(M1, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M1 = glm::translate(M1, glm::vec3(0.65f, 0.5f, -0.45f));
+	M1 = glm::scale(M1, glm::vec3(0.15f, 1.875f, 0.15f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M1));
+	glUniform4f(spLambert->u("color"), 1.0f, 1.0f, 1.0f, 1.0f);
+	Models::tree.drawSolid();
+
+	//Skała v1
+
+	glm::mat4 M2 = M;
+	M2 = glm::rotate(M2, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M2 = glm::translate(M2, glm::vec3(0.65f, 0.5f, 0.45f));
+	M2 = glm::scale(M2, glm::vec3(0.10f, 1.25f, 0.10f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M2));
+	glUniform4f(spLambert->u("color"), 1.0f, 1.0f, 1.0f, 1.0f);
+	Models::rock.drawSolid();
+
+	//Skała v2
+
+	glm::mat4 M3 = M;
+	M3 = glm::rotate(M3, 90.0f * PI / 180.0f, glm::vec3(0.01f, 1.0f, 0.01f));
+	M3 = glm::translate(M3, glm::vec3(-0.35f, 0.0f, -0.45f));
+	M3 = glm::scale(M3, glm::vec3(0.10f, 1.25f, 0.10f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M3));
+	glUniform4f(spLambert->u("color"), 1.0f, 1.0f, 1.0f, 1.0f);
+	Models::rock.drawSolid();
+
+	//Skała v3
+
+	glm::mat4 M4 = M;
+	M4 = glm::rotate(M4, 90.0f * PI / 180.0f, glm::vec3(0.01f, 1.0f, 0.01f));
+	M4 = glm::translate(M4, glm::vec3(0.55f, 0.5f, -0.45f));
+	M4 = glm::scale(M4, glm::vec3(0.05f, 0.625f, 0.05f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M4));
+	glUniform4f(spLambert->u("color"), 1.0f, 1.0f, 1.0f, 1.0f);
+	Models::rock.drawSolid();
+
+	//Drzewo v2
+
+	glm::mat4 M5 = M;
+	M5 = glm::rotate(M5, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M5 = glm::translate(M5, glm::vec3(-0.70f, -1.0f, 0.70f));
+	M5 = glm::scale(M5, glm::vec3(0.15f, 1.875f, 0.15f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M5));
+	glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
+	Models::tree.drawSolid();
+
+	// Droga 
+
+	glm::mat4 M6 = glm::mat4(1.0f);
+	M6 = glm::rotate(M6, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M6 = glm::translate(M6, glm::vec3(0.8f, 0.195f, 1.90f));
+	M6 = glm::scale(M6, glm::vec3(0.1f, 0.01f, 0.6));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M6));
+	glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
+	Models::cube.drawSolid();
+
+	// Droga v2
+
+	glm::mat4 M7 = glm::mat4(1.0f);
+	M7 = glm::rotate(M7, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M7 = glm::translate(M7, glm::vec3(0.8f, 0.195f, -1.90f));
+	M7 = glm::scale(M7, glm::vec3(0.1f, 0.01f, 0.6));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M7));
+	glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
+	Models::cube.drawSolid();
+
+	// Droga v3
+
+	glm::mat4 M8 = glm::mat4(1.0f);
+	M8 = glm::rotate(M8, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M8 = glm::translate(M8, glm::vec3(-0.5f, 0.195f, 0.00f));
+	M8 = glm::scale(M8, glm::vec3(0.1f, 0.01f, 1.1f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M8));
+	glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
+	Models::cube.drawSolid();
+
+	// Droga v4
+
+	glm::mat4 M9 = glm::mat4(1.0f);
+	M9 = glm::rotate(M9, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M9 = glm::translate(M9, glm::vec3(-1.2f, 0.195f, -0.15f));
+	M9 = glm::scale(M9, glm::vec3(0.1f, 0.01f, 0.75f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M9));
+	glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
+	Models::cube.drawSolid();
+
+	// Droga v5
+
+	glm::mat4 M10 = glm::mat4(1.0f);
+	M10 = glm::rotate(M10, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M10 = glm::translate(M10, glm::vec3(1.2f, 0.195f, -0.15f));
+	M10 = glm::scale(M10, glm::vec3(0.1f, 0.01f, 0.75f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M10));
+	glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
+	Models::cube.drawSolid();
+
+	// Miejsce na mape
+
+	glm::mat4 M11 = glm::mat4(1.0f);
+	M11 = glm::rotate(M11, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M11 = glm::translate(M11, glm::vec3(1.5f, 0.21f, -0.5f));
+	M11 = glm::scale(M11, glm::vec3(0.15f, 0.15f, 0.15f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M11));
+	glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
+	Models::placeForTower.drawSolid();
+
+	// Miejsce na mape v2
+
+	glm::mat4 M12 = glm::mat4(1.0f);
+	M12 = glm::rotate(M12, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M12 = glm::translate(M12, glm::vec3(-1.5f, 0.21f, -0.5f));
+	M12 = glm::scale(M12, glm::vec3(0.15f, 0.15f, 0.15f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M12));
+	glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
+	Models::placeForTower.drawSolid();
+
+	// Miejsce na mape v3
+
+	glm::mat4 M13 = glm::mat4(1.0f);
+	M13 = glm::rotate(M13, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M13 = glm::translate(M13, glm::vec3(-0.88f, 0.21f, 0.2f));
+	M13 = glm::scale(M13, glm::vec3(0.15f, 0.15f, 0.15f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M13));
+	glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
+	Models::placeForTower.drawSolid();
+
+	// Miejsce na mape v4
+
+	glm::mat4 M14 = glm::mat4(1.0f);
+	M14 = glm::rotate(M14, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M14 = glm::translate(M14, glm::vec3(0.88f, 0.21f, 0.2f));
+	M14 = glm::scale(M14, glm::vec3(0.15f, 0.15f, 0.15f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M14));
+	glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
+	Models::placeForTower.drawSolid();
+
 	glfwSwapBuffers(window);
 }
 
