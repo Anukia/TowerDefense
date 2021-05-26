@@ -1,3 +1,4 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(491,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (pl_szkielet_01_win.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   main_file.cpp
+D:\Dominik\Desktop\Dominik\Github - repository list\TowerDefense\main_file.cpp(40,17): warning C4305: 'initializing': truncation from 'double' to 'float'
   pl_szkielet_01_win.vcxproj -> D:\Dominik\Desktop\Dominik\Github - repository list\TowerDefense\Debug\Tower Defence.exe

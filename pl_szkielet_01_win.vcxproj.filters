@@ -106,5 +106,17 @@
     <None Include="v_lambert.glsl">
       <Filter>Pliki zasobów</Filter>
     </None>
+    <None Include="f_lamberttextured.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
+    <None Include="f_textured.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
+    <None Include="v_lamberttextured.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
+    <None Include="v_textured.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
   </ItemGroup>
 </Project>
