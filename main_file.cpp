@@ -48,6 +48,8 @@ float camRotateZ = 0;  //raczej mozna usunac camRotateZ
 GLuint grass;
 GLuint pavement;
 GLuint stone;
+GLuint leaf;
+GLuint metal;
 
 GLuint readTexture(const char* filename) {
 	GLuint tex;
@@ -111,9 +113,11 @@ void error_callback(int error, const char* description) {
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
     initShaders();
-	grass = readTexture("grass.jpg");
-	stone = readTexture("stone.jpg");
+	grass = readTexture("grass.png");
+	stone = readTexture("stone.png");
 	pavement = readTexture("pavement.png");
+	leaf = readTexture("leafv2.png");
+	metal = readTexture("metal.png");
 	glClearColor(0.0f, 0.0f, 0.0f, 1);
 	glEnable(GL_DEPTH_TEST);
 	glfwSetKeyCallback(window, key_callback); // zainicjowanie funkcji
@@ -127,6 +131,8 @@ void freeOpenGLProgram(GLFWwindow* window) {
 	glDeleteTextures(1, &grass);
 	glDeleteTextures(1, &stone);
 	glDeleteTextures(1, &pavement);
+	glDeleteTextures(1, &leaf);
+	glDeleteTextures(1, &metal);
     //************Tutaj umieszczaj kod, który należy wykonać po zakończeniu pętli głównej************
 }
 
@@ -139,21 +145,19 @@ void drawScene(GLFWwindow* window) {
 	V = glm::rotate(V, camRotateX, glm::vec3(0.0f, 1.0f, 0.0f)); // tutaj odbywa sie obrot
 	glm::mat4 P = glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 100.0f); // tutaj odbywa sie zoom
 
-	spLambert->use();
-	//spLambertTextured->use();
+	//spLambert->use();
+
+	spLambertTextured->use();
 
 	// Podstawa
-
 	glm::mat4 M = glm::mat4(1.0f);
 	M = glm::scale(M, glm::vec3(2.5f, 0.2f, 2.5f));
+	glUniformMatrix4fv(spLambertTextured->u("P"), 1, false, glm::value_ptr(P));
+	glUniformMatrix4fv(spLambertTextured->u("V"), 1, false, glm::value_ptr(V));
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M));
+	//glUniform4f(spLambert->u("color"), 1.16f, 1.16f, 0.76f, 1.0f);
+	//Models::cube.drawSolid();
 
-	glUniformMatrix4fv(spLambert->u("P"), 1, false, glm::value_ptr(P));
-	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(V));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M));
-	glUniform4f(spLambert->u("color"), 1.16f, 1.16f, 0.76f, 1.0f);
-	Models::cube.drawSolid();
-
-	/*
 	glEnableVertexAttribArray(spLambertTextured->a("vertex"));
 	glVertexAttribPointer(spLambertTextured->a("vertex"), 4, GL_FLOAT, false, 0, Models::cube.vertices);
 	glEnableVertexAttribArray(spLambertTextured->a("normal"));
@@ -161,57 +165,36 @@ void drawScene(GLFWwindow* window) {
 	glEnableVertexAttribArray(spLambertTextured->a("texCoord"));
 	glVertexAttribPointer(spLambertTextured->a("texCoord"), 2, GL_FLOAT, false, 0, Models::cube.texCoords);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, pavement);
+	glActiveTexture(GL_TEXTURE0); //zmieniac numery?
+	glBindTexture(GL_TEXTURE_2D, grass);
 	glUniform1i(spLambertTextured->u("tex"), 0);
-
 	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
-
 	glDisableVertexAttribArray(spLambertTextured->a("vertex"));
 	glDisableVertexAttribArray(spLambertTextured->a("normal"));
 	glDisableVertexAttribArray(spLambertTextured->a("texCoord"));
-	*/
-
+	
 
 	//Drzewo
-	//spLambert->use();
 	glm::mat4 M1 = M;
 	M1 = glm::rotate(M1, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M1 = glm::translate(M1, glm::vec3(0.65f, 0.5f, -0.65f));
 	M1 = glm::scale(M1, glm::vec3(0.15f, 1.875f, 0.15f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M1));
-	glUniform4f(spLambert->u("color"), 1.0f, 1.0f, 1.0f, 1.0f);
-	Models::tree.drawSolid();
 
-	//Skała
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M1));
+	glEnableVertexAttribArray(spLambertTextured->a("vertex"));
+	glVertexAttribPointer(spLambertTextured->a("vertex"), 4, GL_FLOAT, false, 0, Models::tree.vertices);
+	glEnableVertexAttribArray(spLambertTextured->a("normal"));
+	glVertexAttribPointer(spLambertTextured->a("normal"), 4, GL_FLOAT, false, 0, Models::tree.normals);
+	glEnableVertexAttribArray(spLambertTextured->a("texCoord"));
+	glVertexAttribPointer(spLambertTextured->a("texCoord"), 2, GL_FLOAT, false, 0, Models::tree.texCoords);
+	//glUniform4f(spLambertTextured->u("color"), 0.6f, 0.98f, 0.6f, 1.0f);
 
-	glm::mat4 M2 = M;
-	M2 = glm::rotate(M2, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	M2 = glm::translate(M2, glm::vec3(0.65f, 0.5f, 0.45f));
-	M2 = glm::scale(M2, glm::vec3(0.10f, 1.25f, 0.10f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M2));
-	glUniform4f(spLambert->u("color"), 1.0f, 1.0f, 1.0f, 1.0f);
-	Models::rock.drawSolid();
+	glActiveTexture(GL_TEXTURE0); //zmieniac numery?
+	glBindTexture(GL_TEXTURE_2D, leaf);
+	glUniform1i(spLambertTextured->u("tex"), 0);
+	glDrawArrays(GL_TRIANGLES, 0, Models::tree.vertexCount);
 
-	//Skała v2
-
-	glm::mat4 M3 = M;
-	M3 = glm::rotate(M3, 90.0f * PI / 180.0f, glm::vec3(0.01f, 1.0f, 0.01f));
-	M3 = glm::translate(M3, glm::vec3(-0.55f, 0.0f, -0.45f));
-	M3 = glm::scale(M3, glm::vec3(0.10f, 1.25f, 0.10f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M3));
-	glUniform4f(spLambert->u("color"), 1.0f, 1.0f, 1.0f, 1.0f);
-	Models::rock.drawSolid();
-
-	//Skała v3
-
-	glm::mat4 M4 = M;
-	M4 = glm::rotate(M4, 90.0f * PI / 180.0f, glm::vec3(0.01f, 1.0f, 0.01f));
-	M4 = glm::translate(M4, glm::vec3(0.55f, 0.5f, -0.62f));
-	M4 = glm::scale(M4, glm::vec3(0.05f, 0.625f, 0.05f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M4));
-	glUniform4f(spLambert->u("color"), 1.0f, 1.0f, 1.0f, 1.0f);
-	Models::rock.drawSolid();
+	//Models::tree.drawSolid();
 
 	//Drzewo v2
 
@@ -219,79 +202,148 @@ void drawScene(GLFWwindow* window) {
 	M5 = glm::rotate(M5, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M5 = glm::translate(M5, glm::vec3(-0.70f, -0.5f, 0.70f));
 	M5 = glm::scale(M5, glm::vec3(0.15f, 1.875f, 0.15f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M5));
-	glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
-	Models::tree.drawSolid();
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M5));
+	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
+
+	glDrawArrays(GL_TRIANGLES, 0, Models::tree.vertexCount);
+	glDisableVertexAttribArray(spLambertTextured->a("vertex"));
+	glDisableVertexAttribArray(spLambertTextured->a("normal"));
+	glDisableVertexAttribArray(spLambertTextured->a("texCoord"));
+	//Models::tree.drawSolid();
+
+	//Skała
+
+	glm::mat4 M2 = M;
+	M2 = glm::rotate(M2, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M2 = glm::translate(M2, glm::vec3(0.65f, 0.5f, 0.45f));
+	M2 = glm::scale(M2, glm::vec3(0.10f, 1.25f, 0.10f));
+	//glUniform4f(spLambertTextured->u("color"), 1.0f, 1.0f, 1.0f, 1.0f);
+
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M2));
+	glEnableVertexAttribArray(spLambertTextured->a("vertex"));
+	glVertexAttribPointer(spLambertTextured->a("vertex"), 4, GL_FLOAT, false, 0, Models::rock.vertices);
+	glEnableVertexAttribArray(spLambertTextured->a("normal"));
+	glVertexAttribPointer(spLambertTextured->a("normal"), 4, GL_FLOAT, false, 0, Models::rock.normals);
+	glEnableVertexAttribArray(spLambertTextured->a("texCoord"));
+	glVertexAttribPointer(spLambertTextured->a("texCoord"), 2, GL_FLOAT, false, 0, Models::rock.texCoords);
+
+	glActiveTexture(GL_TEXTURE0); //zmieniac numery?
+	glBindTexture(GL_TEXTURE_2D, stone);
+	glUniform1i(spLambertTextured->u("tex"), 0);
+	glDrawArrays(GL_TRIANGLES, 0, Models::rock.vertexCount);
+	//Models::rock.drawSolid();
+	//spLambert->use();
+
+	//Skała v2
+
+	glm::mat4 M3 = M;
+	M3 = glm::rotate(M3, 90.0f * PI / 180.0f, glm::vec3(0.01f, 1.0f, 0.01f));
+	M3 = glm::translate(M3, glm::vec3(-0.55f, 0.0f, -0.45f));
+	M3 = glm::scale(M3, glm::vec3(0.10f, 1.25f, 0.10f));
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M3));
+	//glUniform4f(spLambert->u("color"), 1.0f, 1.0f, 1.0f, 1.0f);
+
+	glDrawArrays(GL_TRIANGLES, 0, Models::rock.vertexCount);
+	//Models::rock.drawSolid();
+
+	//Skała v3
+
+	glm::mat4 M4 = M;
+	M4 = glm::rotate(M4, 90.0f * PI / 180.0f, glm::vec3(0.01f, 1.0f, 0.01f));
+	M4 = glm::translate(M4, glm::vec3(0.55f, 0.5f, -0.62f));
+	M4 = glm::scale(M4, glm::vec3(0.05f, 0.625f, 0.05f));
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M4));
+	//glUniform4f(spLambertTextured->u("color"), 1.0f, 1.0f, 1.0f, 1.0f);
+	glDrawArrays(GL_TRIANGLES, 0, Models::rock.vertexCount);
+	glDisableVertexAttribArray(spLambertTextured->a("vertex"));
+	glDisableVertexAttribArray(spLambertTextured->a("normal"));
+	glDisableVertexAttribArray(spLambertTextured->a("texCoord"));
+	//Models::rock.drawSolid();
 
 	// Droga --
 
 	glm::mat4 M6 = glm::mat4(1.0f);
 	M6 = glm::rotate(M6, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M6 = glm::translate(M6, glm::vec3(0.8f, 0.195f, 1.90f));
-	M6 = glm::scale(M6, glm::vec3(0.1f, 0.01f, 0.6));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M6));
-	glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
-	Models::cube.drawSolid();
+	M6 = glm::scale(M6, glm::vec3(0.1f, 0.05f, 0.6));
+	glUniform4f(spLambertTextured->u("color"), 1.0f, 1.0f, 0.0f, 1.0f);
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M6));
+	glEnableVertexAttribArray(spLambertTextured->a("vertex"));
+	glVertexAttribPointer(spLambertTextured->a("vertex"), 4, GL_FLOAT, false, 0, Models::cube.vertices);
+	glEnableVertexAttribArray(spLambertTextured->a("normal"));
+	glVertexAttribPointer(spLambertTextured->a("normal"), 4, GL_FLOAT, false, 0, Models::cube.normals);
+	//glEnableVertexAttribArray(spLambertTextured->a("texCoord"));
+	//glVertexAttribPointer(spLambertTextured->a("texCoord"), 2, GL_FLOAT, false, 0, Models::cube.texCoords);
+	//glActiveTexture(GL_TEXTURE0); //zmieniac numery?
+	//glBindTexture(GL_TEXTURE_2D, pavement);
+	//glUniform1i(spLambertTextured->u("tex"), 0);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
+	//Models::cube.drawSolid();
 
 	// Droga v2
 
 	glm::mat4 M7 = glm::mat4(1.0f);
 	M7 = glm::rotate(M7, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M7 = glm::translate(M7, glm::vec3(-1.0f, 0.195f, -1.70f));
-	M7 = glm::scale(M7, glm::vec3(0.1f, 0.01f, 0.8));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M7));
-	glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
-	Models::cube.drawSolid();
-
+	M7 = glm::scale(M7, glm::vec3(0.1f, 0.05f, 0.8));
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M7));
+	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
+	//Models::cube.drawSolid();
+	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
 	// Droga v3 --
 
 	glm::mat4 M8 = glm::mat4(1.0f);
 	M8 = glm::rotate(M8, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M8 = glm::translate(M8, glm::vec3(-1.6f, 0.195f, 0.60f));
-	M8 = glm::scale(M8, glm::vec3(0.1f, 0.01f, 0.5f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M8));
-	glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
-	Models::cube.drawSolid();
-
+	M8 = glm::scale(M8, glm::vec3(0.1f, 0.05f, 0.5f));
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M8));
+	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
+	//Models::cube.drawSolid();
+	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
 	// Droga v4 --
 
 	glm::mat4 M9 = glm::mat4(1.0f);
 	M9 = glm::rotate(M9, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M9 = glm::translate(M9, glm::vec3(0.2f, 0.195f, -0.10f));
-	M9 = glm::scale(M9, glm::vec3(0.1f, 0.01f, 1.60f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M9));
-	glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
-	Models::cube.drawSolid();
-
+	M9 = glm::scale(M9, glm::vec3(0.1f, 0.05f, 1.60f));
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M9));
+	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
+	//Models::cube.drawSolid();
+	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
 	// Droga v5 --
 
 	glm::mat4 M10 = glm::mat4(1.0f);
 	M10 = glm::rotate(M10, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M10 = glm::translate(M10, glm::vec3(1.2f, 0.195f, 0.4f));
-	M10 = glm::scale(M10, glm::vec3(0.1f, 0.01f, 1.3f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M10));
-	glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
-	Models::cube.drawSolid();
-
+	M10 = glm::scale(M10, glm::vec3(0.1f, 0.05f, 1.3f));
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M10));
+	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
+	//Models::cube.drawSolid();
+	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
 	// Droga v6 --
 
 	glm::mat4 M15 = glm::mat4(1.0f);
 	M15 = glm::rotate(M15, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M15 = glm::translate(M15, glm::vec3(1.6f, 0.195f, -0.4f));
-	M15 = glm::scale(M15, glm::vec3(0.1f, 0.01f, 0.5f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M15));
-	glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
-	Models::cube.drawSolid();
-
+	M15 = glm::scale(M15, glm::vec3(0.1f, 0.05f, 0.5f));
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M15));
+	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
+	//Models::cube.drawSolid();
+	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
 	// Droga v7 --
 
 	glm::mat4 M16 = glm::mat4(1.0f);
 	M16 = glm::rotate(M16, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M16 = glm::translate(M16, glm::vec3(-0.8f, 0.195f, -0.2f));
-	M16 = glm::scale(M16, glm::vec3(0.1f, 0.01f, 1.3f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M16));
-	glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
-	Models::cube.drawSolid();
+	M16 = glm::scale(M16, glm::vec3(0.1f, 0.05f, 1.3f));
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M16));
+	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
+	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
+	glDisableVertexAttribArray(spLambertTextured->a("vertex"));
+	glDisableVertexAttribArray(spLambertTextured->a("normal"));
+	glDisableVertexAttribArray(spLambertTextured->a("texCoord"));
+	//Models::cube.drawSolid();
 
 	// Miejsce na mape
 
@@ -299,9 +351,19 @@ void drawScene(GLFWwindow* window) {
 	M11 = glm::rotate(M11, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M11 = glm::translate(M11, glm::vec3(1.5f, 0.21f, -0.5f));
 	M11 = glm::scale(M11, glm::vec3(0.15f, 0.15f, 0.15f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M11));
-	glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
-	Models::placeForTower.drawSolid();
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M11));
+	glEnableVertexAttribArray(spLambertTextured->a("vertex"));
+	glVertexAttribPointer(spLambertTextured->a("vertex"), 4, GL_FLOAT, false, 0, Models::placeForTower.vertices);
+	glEnableVertexAttribArray(spLambertTextured->a("normal"));
+	glVertexAttribPointer(spLambertTextured->a("normal"), 4, GL_FLOAT, false, 0, Models::placeForTower.normals);
+	glEnableVertexAttribArray(spLambertTextured->a("texCoord"));
+	glVertexAttribPointer(spLambertTextured->a("texCoord"), 2, GL_FLOAT, false, 0, Models::placeForTower.texCoords);
+	//glUniform4f(spLambertTextured->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
+	//Models::placeForTower.drawSolid();
+	glActiveTexture(GL_TEXTURE0); //zmieniac numery?
+	glBindTexture(GL_TEXTURE_2D, metal);
+	glUniform1i(spLambertTextured->u("tex"), 0);
+	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
 
 	// Miejsce na mape v2
 
@@ -309,9 +371,10 @@ void drawScene(GLFWwindow* window) {
 	M12 = glm::rotate(M12, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M12 = glm::translate(M12, glm::vec3(-1.1f, 0.21f, 0.7f));
 	M12 = glm::scale(M12, glm::vec3(0.15f, 0.15f, 0.15f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M12));
-	glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
-	Models::placeForTower.drawSolid();
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M12));
+	//glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
+	//Models::placeForTower.drawSolid();
+	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
 
 	// Miejsce na mape v3
 
@@ -319,39 +382,43 @@ void drawScene(GLFWwindow* window) {
 	M13 = glm::rotate(M13, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M13 = glm::translate(M13, glm::vec3(0.9f, 0.21f, 1.3f));
 	M13 = glm::scale(M13, glm::vec3(0.15f, 0.15f, 0.15f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M13));
-	glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
-	Models::placeForTower.drawSolid();
-
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M13));
+	//glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
+	//Models::placeForTower.drawSolid();
+	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
 	// Miejsce na mape v4
 
 	glm::mat4 M14 = glm::mat4(1.0f);
 	M14 = glm::rotate(M14, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M14 = glm::translate(M14, glm::vec3(0.48f, 0.21f, 1.3f));
 	M14 = glm::scale(M14, glm::vec3(0.15f, 0.15f, 0.15f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M14));
-	glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
-	Models::placeForTower.drawSolid();
-
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M14));
+	//glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
+	//Models::placeForTower.drawSolid();
+	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
 	// Miejsce na mape v5
 
 	glm::mat4 M17 = glm::mat4(1.0f);
 	M17 = glm::rotate(M17, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M17 = glm::translate(M17, glm::vec3(-0.5f, 0.21f, -1.3f));
 	M17 = glm::scale(M17, glm::vec3(0.15f, 0.15f, 0.15f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M17));
-	glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
-	Models::placeForTower.drawSolid();
-
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M17));
+	//glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
+	//Models::placeForTower.drawSolid();
+	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
 	// Miejsce na mape v6
 
 	glm::mat4 M18 = glm::mat4(1.0f);
 	M18 = glm::rotate(M18, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M18 = glm::translate(M18, glm::vec3(-0.08f, 0.21f, -1.3f));
 	M18 = glm::scale(M18, glm::vec3(0.15f, 0.15f, 0.15f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M18));
-	glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
-	Models::placeForTower.drawSolid();
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M18));
+	//glUniform4f(spLambertTextured->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
+	//Models::placeForTower.drawSolid();
+	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
+	glDisableVertexAttribArray(spLambertTextured->a("vertex"));
+	glDisableVertexAttribArray(spLambertTextured->a("normal"));
+	glDisableVertexAttribArray(spLambertTextured->a("texCoord"));
 
 	glfwSwapBuffers(window);
 }
