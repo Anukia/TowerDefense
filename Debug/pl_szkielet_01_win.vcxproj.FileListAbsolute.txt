@@ -1,2 +1,4 @@
 D:\Dominik\Desktop\Dominik\Github - repository list\TowerDefense\Debug\Tower Defence.exe
 D:\Dominik\Desktop\Dominik\Github - repository list\TowerDefense\Debug\Tower Defence.pdb
+D:\Dominik\Desktop\TowerDefense-master\Debug\Tower Defence.exe
+D:\Dominik\Desktop\TowerDefense-master\Debug\Tower Defence.pdb
