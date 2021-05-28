@@ -113,6 +113,19 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 		fov = 155.0f;
 }
 
+void mouse_callback(GLFWwindow* window, int button, int action, int mods) {
+	if (action == GLFW_MOUSE_BUTTON_RIGHT) {
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
+		std::cout << xpos <<" cos tam "<< ypos << "\n"; //TODO Jakoś trzeba wykminic jak brać pozycje miejsc na wieże
+		//Na pewnno trzeba cos z macierzami wykminić i wziac pod uwagę rotate i zooma
+		//Myślę że trzeba stworzyć 6 global pomocnych macierzy które beda mialy wartosc aktualna wartość pozycji objektów
+		//Trzeba w sumie pamietać że my obracamy kamerą a nie objectami, wiec w sumie musimy brać pozycję kamery
+		//Też mozna to jebać i zbindować to w takim sposob, by poprzez klikniecie np 'A' i 'D' zmieniały wybrane miejsca na wieże
+		//Można zmieniać kolor/teksturkę wybranego miejsca na wieże
+	}
+}
+
 void error_callback(int error, const char* description) {
 	fputs(description, stderr);
 }
@@ -131,6 +144,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	ImGui_ImplGlfwGL3_Init(window, true);
 	glfwSetKeyCallback(window, key_callback); // zainicjowanie funkcji
 	glfwSetScrollCallback(window, scroll_callback); // zainicjowanie funkcji
+	glfwSetMouseButtonCallback(window, mouse_callback);
 	ImGui::StyleColorsDark();
 }
 
@@ -154,7 +168,7 @@ void drawScene(GLFWwindow* window) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	ImGui_ImplGlfwGL3_NewFrame();
-	{
+	{ //TODO ogarnac GUI
 		//ImGui::Begin("Slot 1",0,ImGuiWindowFlags);
 		static float f = 0.0f;
 		static int counter = 0;
@@ -181,7 +195,8 @@ void drawScene(GLFWwindow* window) {
 
 	//spLambert->use();
 
-	spLambertTextured->use();
+	spLambertTextured->use(); //TODO nie mam pojecia jak korzystać z paru shaderów xD
+	// ten shader nie ma mozliwosci pokolorowania obiektu (chyba), tylko tekstury mozna dac
 
 	// Podstawa
 	glm::mat4 M = glm::mat4(1.0f);
