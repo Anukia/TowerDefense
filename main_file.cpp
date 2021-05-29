@@ -53,6 +53,9 @@ GLuint pavement;
 GLuint stone;
 GLuint leaf;
 GLuint metal;
+GLuint chosen;
+
+int wybrana_wieza = 0;
 
 bool show_demo_window = true;
 bool show_another_window = false;
@@ -93,6 +96,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			fov = 120;
 			camRotateX = 0;
 		}
+		if (key == GLFW_KEY_1) wybrana_wieza = 1;
+		if (key == GLFW_KEY_2) wybrana_wieza = 2;
+		if (key == GLFW_KEY_3) wybrana_wieza = 3;
+		if (key == GLFW_KEY_4) wybrana_wieza = 4;
+		if (key == GLFW_KEY_5) wybrana_wieza = 5;
+		if (key == GLFW_KEY_6) wybrana_wieza = 6;
+
 	}
 	
 	if (action == GLFW_RELEASE) {
@@ -138,6 +148,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	pavement = readTexture("pavement.png");
 	leaf = readTexture("leafv2.png");
 	metal = readTexture("metal.png");
+	chosen = readTexture("yellow.png");
 	glClearColor(0.0f, 0.0f, 0.0f, 1);
 	glEnable(GL_DEPTH_TEST);
 	ImGui::CreateContext();
@@ -157,6 +168,7 @@ void freeOpenGLProgram(GLFWwindow* window) {
 	glDeleteTextures(1, &pavement);
 	glDeleteTextures(1, &leaf);
 	glDeleteTextures(1, &metal);
+	glDeleteTextures(1, &chosen);
 
 	ImGui_ImplGlfwGL3_Shutdown();
 	ImGui::DestroyContext();
@@ -410,7 +422,8 @@ void drawScene(GLFWwindow* window) {
 	//glUniform4f(spLambertTextured->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
 	//Models::placeForTower.drawSolid();
 	glActiveTexture(GL_TEXTURE0); //zmieniac numery?
-	glBindTexture(GL_TEXTURE_2D, metal);
+	if(wybrana_wieza == 1) glBindTexture(GL_TEXTURE_2D, chosen);
+	else glBindTexture(GL_TEXTURE_2D, metal);
 	glUniform1i(spLambertTextured->u("tex"), 0);
 	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
 
@@ -423,6 +436,8 @@ void drawScene(GLFWwindow* window) {
 	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M12));
 	//glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
 	//Models::placeForTower.drawSolid();
+	if (wybrana_wieza == 6) glBindTexture(GL_TEXTURE_2D, chosen);
+	else glBindTexture(GL_TEXTURE_2D, metal);
 	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
 
 	// Miejsce na mape v3
@@ -434,6 +449,8 @@ void drawScene(GLFWwindow* window) {
 	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M13));
 	//glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
 	//Models::placeForTower.drawSolid();
+	if (wybrana_wieza == 2) glBindTexture(GL_TEXTURE_2D, chosen);
+	else glBindTexture(GL_TEXTURE_2D, metal);
 	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
 	// Miejsce na mape v4
 
@@ -444,6 +461,8 @@ void drawScene(GLFWwindow* window) {
 	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M14));
 	//glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
 	//Models::placeForTower.drawSolid();
+	if (wybrana_wieza == 3) glBindTexture(GL_TEXTURE_2D, chosen);
+	else glBindTexture(GL_TEXTURE_2D, metal);
 	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
 	// Miejsce na mape v5
 
@@ -454,6 +473,8 @@ void drawScene(GLFWwindow* window) {
 	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M17));
 	//glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
 	//Models::placeForTower.drawSolid();
+	if (wybrana_wieza == 5) glBindTexture(GL_TEXTURE_2D, chosen);
+	else glBindTexture(GL_TEXTURE_2D, metal);
 	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
 	// Miejsce na mape v6
 
@@ -464,6 +485,8 @@ void drawScene(GLFWwindow* window) {
 	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M18));
 	//glUniform4f(spLambertTextured->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
 	//Models::placeForTower.drawSolid();
+	if (wybrana_wieza == 4) glBindTexture(GL_TEXTURE_2D, chosen);
+	else glBindTexture(GL_TEXTURE_2D, metal);
 	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
 	glDisableVertexAttribArray(spLambertTextured->a("vertex"));
 	glDisableVertexAttribArray(spLambertTextured->a("normal"));
