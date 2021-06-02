@@ -1,0 +1,2 @@
+D:/Dominik/Desktop/Dominik/Github - repository list/TowerDefense/glm/out/build/x64-Debug (default)/CMakeFiles/edit_cache.dir
+D:/Dominik/Desktop/Dominik/Github - repository list/TowerDefense/glm/out/build/x64-Debug (default)/CMakeFiles/rebuild_cache.dir
