@@ -59,6 +59,7 @@
     <ClCompile Include="woodenTowerWatch.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitignore" />
     <None Include="f_constant.glsl" />
     <None Include="f_lambert.glsl" />
     <None Include="f_lamberttextured.glsl" />

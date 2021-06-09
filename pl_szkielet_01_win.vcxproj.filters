@@ -151,5 +151,6 @@
     <None Include="v_textured.glsl">
       <Filter>Pliki zasobów</Filter>
     </None>
+    <None Include=".gitignore" />
   </ItemGroup>
 </Project>
