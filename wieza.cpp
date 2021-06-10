@@ -90,6 +90,7 @@ void Wieza::rysuj(int wybranaWieza) {
 		glDisableVertexAttribArray(spLambertTextured->a("vertex"));
 		glDisableVertexAttribArray(spLambertTextured->a("normal"));
 		glDisableVertexAttribArray(spLambertTextured->a("texCoord"));
+
 	}
 
 }
@@ -128,4 +129,11 @@ void Wieza::setterKupionaWieza() {
 
 bool Wieza::getterKupionaWieza() {
 	return kupionaWieza;
+}
+int Wieza::getterZasieg() {
+	return zasieg[idUlepszenieZasieg];
+}
+
+int Wieza::getterObrazenia() {
+	return obrazenia[idUlepszenieZasieg];
 }

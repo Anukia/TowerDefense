@@ -18,10 +18,12 @@ private:
 	GLuint chosen;
 	GLuint tower;
 	int kosztWiezy = 50;
-	int kosztUlepszeniaZasieg[4] = { 50,75,100,200 };
+	int kosztUlepszeniaZasieg[4] = { 50, 75, 100, 200 };
 	int idUlepszenieZasieg = 0;
-	int kosztUlepszeniaObrazen[4] = { 100,175,250,500 };
+	int kosztUlepszeniaObrazen[4] = { 100, 250, 350, 500 };
 	int idUlepszenieObrazen = 0;
+	int zasieg[4] = { 100, 125, 150, 200 };
+	int obrazenia[4] = { 2, 3, 4, 5 };
 
 public:
 
@@ -39,5 +41,8 @@ public:
 	int getterKosztWiezy();
 	void setterKupionaWieza();
 	bool getterKupionaWieza();
-
+	int getterZasieg();
+	int getterObrazenia();
+	void setterZasieg();
+	void setterObrazenia();
 };

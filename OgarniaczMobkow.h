@@ -14,6 +14,7 @@ class OgarniaczMobkow
 	bool czasNaNowaRunde;
 	float czasOdOstatniejRundy;
 
+
 public:
 
 	OgarniaczMobkow()

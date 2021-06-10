@@ -34,6 +34,7 @@ void Mobki::rysuj() {
 	glVertexAttribPointer(spLambertTextured->a("texCoord"), 2, GL_FLOAT, false, 0, Models::sphere.texCoords);
 
 	glDrawArrays(GL_TRIANGLES, 0, Models::sphere.vertexCount);
+
 	glDisableVertexAttribArray(spLambertTextured->a("vertex"));
 	glDisableVertexAttribArray(spLambertTextured->a("normal"));
 	glDisableVertexAttribArray(spLambertTextured->a("texCoord"));

@@ -104,8 +104,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (action == GLFW_PRESS) {
 		if (key == GLFW_KEY_LEFT) speedCamX = radius;
 		if (key == GLFW_KEY_RIGHT) speedCamX = -radius;
-		if (key == GLFW_KEY_UP) speedCamZ = -radius; //potencjalnie do usuniecia
-		if (key == GLFW_KEY_DOWN) speedCamZ = radius; //potencjalnie do usuniecia
+		if (key == GLFW_KEY_UP) speedCamZ = 1;
+		if (key == GLFW_KEY_DOWN) speedCamZ = -1; 
 		if (key == GLFW_KEY_R) { //reset ustawień
 			fov = 120;
 			camRotateX = 0;
@@ -122,7 +122,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		if (key == GLFW_KEY_6) wybrana_wieza = 6;
 		if (key == GLFW_KEY_Z) {
 
-			std:string helper = "Kup wieze: " + std::to_string(wieze[wybrana_wieza - 1].getterKosztWiezy()) + " zlota"; //zmianic wartosc
+			std::string helper = "Kup wieze: " + std::to_string(wieze[wybrana_wieza - 1].getterKosztWiezy()) + " zlota"; //zmianic wartosc
 			const char* c = helper.c_str();
 			if (zloto >= wieze[wybrana_wieza - 1].getterKosztWiezy() && !wieze[wybrana_wieza - 1].getterKupionaWieza()) {
 				zloto -= wieze[wybrana_wieza - 1].getterKosztWiezy();
@@ -159,9 +159,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	
 	if (action == GLFW_RELEASE) {
 		if (key == GLFW_KEY_LEFT) speedCamX = 0;
-		if (key == GLFW_KEY_RIGHT)speedCamX = 0;
-		if (key == GLFW_KEY_UP) speedCamZ = 0; //potencjalnie do usuniecia
-		if (key == GLFW_KEY_DOWN) speedCamZ = 0; //potencjalnie do usuniecia
+		if (key == GLFW_KEY_RIGHT) speedCamX = 0;
+		if (key == GLFW_KEY_UP) speedCamZ = 0;
+		if (key == GLFW_KEY_DOWN) speedCamZ = 0;
 	}
 	
 }
@@ -169,10 +169,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	fov -= (float)yoffset; //yoffset mowi nam o ile przesunelismy scrolla 
-	if (fov < 60.0f)  // ograniczenia 
-		fov = 60.0f;
-	if (fov > 155.0f)
-		fov = 155.0f;
 }
 
 void mouse_callback(GLFWwindow* window, int button, int action, int mods) {
@@ -242,7 +238,6 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	glm::mat4 P = glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 100.0f); // tutaj odbywa sie zoom
 
 	//spLambert->use();
-
 	spLambertTextured->use(); //TODO nie mam pojecia jak korzystać z paru shaderów xD
 	// ten shader nie ma mozliwosci pokolorowania obiektu (chyba), tylko tekstury mozna dac
 
@@ -269,6 +264,7 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	glDisableVertexAttribArray(spLambertTextured->a("vertex"));
 	glDisableVertexAttribArray(spLambertTextured->a("normal"));
 	glDisableVertexAttribArray(spLambertTextured->a("texCoord"));
+	glDisable(GL_TEXTURE0);
 	
 
 	//Drzewo
@@ -368,12 +364,14 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	glVertexAttribPointer(spLambertTextured->a("vertex"), 4, GL_FLOAT, false, 0, Models::cube.vertices);
 	glEnableVertexAttribArray(spLambertTextured->a("normal"));
 	glVertexAttribPointer(spLambertTextured->a("normal"), 4, GL_FLOAT, false, 0, Models::cube.normals);
+
 	//glEnableVertexAttribArray(spLambertTextured->a("texCoord"));
 	//glVertexAttribPointer(spLambertTextured->a("texCoord"), 2, GL_FLOAT, false, 0, Models::cube.texCoords);
 	//glActiveTexture(GL_TEXTURE0); //zmieniac numery?
 	//glBindTexture(GL_TEXTURE_2D, pavement);
 	//glUniform1i(spLambertTextured->u("tex"), 0);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+
 	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
 	//Models::cube.drawSolid();
 
@@ -432,100 +430,11 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
 	//Models::cube.drawSolid();
 	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
-
-	/*
-	// Miejsce na mape
-
-	glm::mat4 M11 = glm::mat4(1.0f);
-	M11 = glm::rotate(M11, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	M11 = glm::translate(M11, glm::vec3(1.5f, 0.21f, -0.5f));
-	M11 = glm::scale(M11, glm::vec3(0.15f, 0.15f, 0.15f));
-	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M11));
-
-	glEnableVertexAttribArray(spLambertTextured->a("vertex"));
-	glVertexAttribPointer(spLambertTextured->a("vertex"), 4, GL_FLOAT, false, 0, Models::placeForTower.vertices);
-	glEnableVertexAttribArray(spLambertTextured->a("normal"));
-	glVertexAttribPointer(spLambertTextured->a("normal"), 4, GL_FLOAT, false, 0, Models::placeForTower.normals);
-	glEnableVertexAttribArray(spLambertTextured->a("texCoord"));
-	glVertexAttribPointer(spLambertTextured->a("texCoord"), 2, GL_FLOAT, false, 0, Models::placeForTower.texCoords);
-
-	//glUniform4f(spLambertTextured->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
-	//Models::placeForTower.drawSolid();
-
-	glActiveTexture(GL_TEXTURE0); //zmieniac numery?
-	if(wybrana_wieza == 1) glBindTexture(GL_TEXTURE_2D, chosen);
-	else glBindTexture(GL_TEXTURE_2D, metal);
-	glUniform1i(spLambertTextured->u("tex"), 0);
-	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
-
-	// Miejsce na mape v2
-
-	glm::mat4 M13 = glm::mat4(1.0f);
-	M13 = glm::rotate(M13, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	M13 = glm::translate(M13, glm::vec3(0.9f, 0.21f, 1.3f));
-	M13 = glm::scale(M13, glm::vec3(0.15f, 0.15f, 0.15f));
-	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M13));
-	//glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
-	//Models::placeForTower.drawSolid();
-	if (wybrana_wieza == 2) glBindTexture(GL_TEXTURE_2D, chosen);
-	else glBindTexture(GL_TEXTURE_2D, metal);
-	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
-
-	// Miejsce na mape v3
-
-	glm::mat4 M14 = glm::mat4(1.0f);
-	M14 = glm::rotate(M14, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	M14 = glm::translate(M14, glm::vec3(0.48f, 0.21f, 1.3f));
-	M14 = glm::scale(M14, glm::vec3(0.15f, 0.15f, 0.15f));
-	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M14));
-	//glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
-	//Models::placeForTower.drawSolid();
-	if (wybrana_wieza == 3) glBindTexture(GL_TEXTURE_2D, chosen);
-	else glBindTexture(GL_TEXTURE_2D, metal);
-	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
-
-	// Miejsce na mape v4
-
-	glm::mat4 M18 = glm::mat4(1.0f);
-	M18 = glm::rotate(M18, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	M18 = glm::translate(M18, glm::vec3(-0.08f, 0.21f, -1.3f));
-	M18 = glm::scale(M18, glm::vec3(0.15f, 0.15f, 0.15f));
-	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M18));
-	//glUniform4f(spLambertTextured->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
-	//Models::placeForTower.drawSolid();
-	if (wybrana_wieza == 4) glBindTexture(GL_TEXTURE_2D, chosen);
-	else glBindTexture(GL_TEXTURE_2D, metal);
-	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
-
-	// Miejsce na mape v5
-
-	glm::mat4 M17 = glm::mat4(1.0f);
-	M17 = glm::rotate(M17, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	M17 = glm::translate(M17, glm::vec3(-0.5f, 0.21f, -1.3f));
-	M17 = glm::scale(M17, glm::vec3(0.15f, 0.15f, 0.15f));
-	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M17));
-	//glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
-	//Models::placeForTower.drawSolid();
-	if (wybrana_wieza == 5) glBindTexture(GL_TEXTURE_2D, chosen);
-	else glBindTexture(GL_TEXTURE_2D, metal);
-	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
-
-	// Miejsce na mape v6
-
-	glm::mat4 M12 = glm::mat4(1.0f);
-	M12 = glm::rotate(M12, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	M12 = glm::translate(M12, glm::vec3(-1.1f, 0.21f, 0.7f));
-	M12 = glm::scale(M12, glm::vec3(0.15f, 0.15f, 0.15f));
-	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M12));
-	//glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
-	//Models::placeForTower.drawSolid();
-	if (wybrana_wieza == 6) glBindTexture(GL_TEXTURE_2D, chosen);
-	else glBindTexture(GL_TEXTURE_2D, metal);
-	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
 	glDisableVertexAttribArray(spLambertTextured->a("vertex"));
 	glDisableVertexAttribArray(spLambertTextured->a("normal"));
 	glDisableVertexAttribArray(spLambertTextured->a("texCoord"));
-	*/
+
+	ogarniacz.robiSwoje(time, hp_baza);
 
 	wieze[0].rysuj(wybrana_wieza);
 	wieze[1].rysuj(wybrana_wieza);
@@ -534,10 +443,11 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	wieze[4].rysuj(wybrana_wieza);
 	wieze[5].rysuj(wybrana_wieza);
 
+
 	ImGui_ImplGlfwGL3_NewFrame();
 	if (showWindow == true) {
 		{
-			std:string helper;
+			std::string helper;
 			const char* c;
 
 			ImGui::Begin("Menu", nullptr); // Nazwa Frame'u
@@ -593,7 +503,6 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 		}
 	}
 
-	ogarniacz.robiSwoje(time, hp_baza);
 
 	ImGui::Render();
 	ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
@@ -641,7 +550,11 @@ int main(void)
 	{
 		float radius = 1.00f;
 		camRotateX += speedCamX * radius; // o ile zmieniamy rotate
-		camRotateZ += speedCamZ * radius;  //raczej mozna usunac camRotateZ 
+		fov += (float)speedCamZ * radius;
+		if (fov < 60.0f)  // ograniczenia 
+			fov = 60.0f;
+		if (fov > 155.0f)
+			fov = 155.0f;
 		time = glfwGetTime() - totaltime;
 		totaltime += time;
 		drawScene(window, time, hp_baza);
