@@ -78,6 +78,5 @@ void Mobki::poruszanie(float time, std::vector<Mobki>& mobki, int index, int& hp
 void Mobki::doszedl(std::vector<Mobki>& mobki, int index, int& hp_baza)
 {
 	hp_baza -= hp;
-	std::cout << hp_baza << std::endl;
 	mobki.erase(mobki.begin() + index);
 }

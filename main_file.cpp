@@ -26,10 +26,15 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string>
+//#include <charconv>
 #include <iostream>
 #include <vector>
-#include<cmath>
+//#include <cstring>
+//#include <cstdlib>
+#include <cmath>
 #include "mobki.h"
+#include "wieza.h"
 #include "OgarniaczMobkow.h"
 #include "constants.h"
 #include "allmodels.h"
@@ -37,6 +42,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "shaderprogram.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw_gl3.h"
+#include <imgui/imgui_internal.h>
 
 using namespace std;
 
@@ -51,21 +57,23 @@ float speedCamX = 0;
 float speedCamZ = 0;
 float fov = 120;
 float camRotateX = 0;
-float camRotateZ = 0;  //raczej mozna usunac camRotateZ 
+float camRotateZ = 0;  //raczej mozna usunac camRotateZ
+int zloto = 100000;
+int hp_baza = 25;
+bool showWindow = true;
+
 GLuint grass;
 GLuint pavement;
 GLuint stone;
 GLuint leaf;
 GLuint metal;
 GLuint chosen;
+GLuint tower;
 
 OgarniaczMobkow ogarniacz = OgarniaczMobkow();
+Wieza wieze[6] = { Wieza(), Wieza(), Wieza(), Wieza(), Wieza(), Wieza() };
 
-int wybrana_wieza = 0;
-
-bool show_demo_window = true;
-bool show_another_window = false;
-ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+int wybrana_wieza = 1;
 
 GLuint readTexture(const char* filename) {
 	GLuint tex;
@@ -102,12 +110,50 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			fov = 120;
 			camRotateX = 0;
 		}
+		if (key == GLFW_KEY_W) { //Wyłącz/włącz frame z imgui
+			if (showWindow == false) showWindow = true;
+			else showWindow = false;
+		}
 		if (key == GLFW_KEY_1) wybrana_wieza = 1;
 		if (key == GLFW_KEY_2) wybrana_wieza = 2;
 		if (key == GLFW_KEY_3) wybrana_wieza = 3;
 		if (key == GLFW_KEY_4) wybrana_wieza = 4;
 		if (key == GLFW_KEY_5) wybrana_wieza = 5;
 		if (key == GLFW_KEY_6) wybrana_wieza = 6;
+		if (key == GLFW_KEY_Z) {
+
+			std:string helper = "Kup wieze: " + std::to_string(wieze[wybrana_wieza - 1].getterKosztWiezy()) + " zlota"; //zmianic wartosc
+			const char* c = helper.c_str();
+			if (zloto >= wieze[wybrana_wieza - 1].getterKosztWiezy() && !wieze[wybrana_wieza - 1].getterKupionaWieza()) {
+				zloto -= wieze[wybrana_wieza - 1].getterKosztWiezy();
+				wieze[wybrana_wieza - 1].setterKupionaWieza();
+			}
+
+		}
+		if (key == GLFW_KEY_X) {
+
+			if (wieze[wybrana_wieza - 1].getterIdZasieg() < 4) {
+
+				std::string helper = "Ulepsz zasieg: " + std::to_string(wieze[wybrana_wieza - 1].getterKosztUlepszeniaZasieg()) + " zlota"; //zmianic wartosc
+				const char* c = helper.c_str();
+				if (wieze[wybrana_wieza - 1].getterKupionaWieza() && zloto >= wieze[wybrana_wieza - 1].getterKosztUlepszeniaZasieg()) {
+					zloto -= wieze[wybrana_wieza - 1].getterKosztUlepszeniaZasieg();
+					wieze[wybrana_wieza - 1].setterIdUlepszeniaZasieg();
+				}
+			}
+
+		}
+		if (key == GLFW_KEY_C) {
+
+			if (wieze[wybrana_wieza - 1].getterIdObrazen() < 4) {
+				std::string helper = "Ulepsz obrazenia: " + std::to_string(wieze[wybrana_wieza - 1].getterKosztUlepszeniaObrazen()) + " zlota"; //zmianic wartosc
+				const char* c = helper.c_str();
+				if (wieze[wybrana_wieza - 1].getterKupionaWieza() && zloto >= wieze[wybrana_wieza - 1].getterKosztUlepszeniaObrazen()) {
+					zloto -= wieze[wybrana_wieza - 1].getterKosztUlepszeniaObrazen();
+					wieze[wybrana_wieza - 1].setterIdUlepszeniaObrazen();
+				}
+			}
+		}
 
 	}
 	
@@ -133,12 +179,7 @@ void mouse_callback(GLFWwindow* window, int button, int action, int mods) {
 	if (action == GLFW_MOUSE_BUTTON_RIGHT) {
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
-		std::cout << xpos <<" cos tam "<< ypos << "\n"; //TODO Jakoś trzeba wykminic jak brać pozycje miejsc na wieże
-		//Na pewnno trzeba cos z macierzami wykminić i wziac pod uwagę rotate i zooma
-		//Myślę że trzeba stworzyć 6 global pomocnych macierzy które beda mialy wartosc aktualna wartość pozycji objektów
-		//Trzeba w sumie pamietać że my obracamy kamerą a nie objectami, wiec w sumie musimy brać pozycję kamery
-		//Też mozna to jebać i zbindować to w takim sposob, by poprzez klikniecie np 'A' i 'D' zmieniały wybrane miejsca na wieże
-		//Można zmieniać kolor/teksturkę wybranego miejsca na wieże
+		//std::cout << xpos <<" cos tam "<< ypos << "\n";
 	}
 }
 
@@ -155,8 +196,17 @@ void initOpenGLProgram(GLFWwindow* window) {
 	leaf = readTexture("leafv2.png");
 	metal = readTexture("metal.png");
 	chosen = readTexture("yellow.png");
+	tower = readTexture("tower.png");
 	glClearColor(0.0f, 0.0f, 0.0f, 1);
 	glEnable(GL_DEPTH_TEST);
+
+	wieze[0] = Wieza(1.5f, 0.21f, -0.5f, 0.15f, 0.15f, 0.15f, 0.075f, 0.075f, 0.075f, 1, metal, chosen, tower);
+	wieze[1] = Wieza(0.9f, 0.21f, 1.3f, 0.15f, 0.15f, 0.15f, 0.075f, 0.075f, 0.075f, 2, metal, chosen, tower);
+	wieze[2] = Wieza(0.48f, 0.21f, 1.3f, 0.15f, 0.15f, 0.15f, 0.075f, 0.075f, 0.075f, 3, metal, chosen, tower);
+	wieze[3] = Wieza(-0.08f, 0.21f, -1.3f, 0.15f, 0.15f, 0.15f, 0.075f, 0.075f, 0.075f, 4, metal, chosen, tower);
+	wieze[4] = Wieza(-0.5f, 0.21f, -1.3f, 0.15f, 0.15f, 0.15f, 0.075f, 0.075f, 0.075f, 5, metal, chosen, tower);
+	wieze[5] = Wieza(-1.1f, 0.21f, 0.7f, 0.15f, 0.15f, 0.15f, 0.075f, 0.075f, 0.075f, 6, metal, chosen, metal);
+
 	ImGui::CreateContext();
 	ImGui_ImplGlfwGL3_Init(window, true);
 	glfwSetKeyCallback(window, key_callback); // zainicjowanie funkcji
@@ -184,26 +234,6 @@ void freeOpenGLProgram(GLFWwindow* window) {
 //Procedura rysująca zawartość sceny
 void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	ImGui_ImplGlfwGL3_NewFrame();
-	{ //TODO ogarnac GUI
-		//ImGui::Begin("Slot 1",0,ImGuiWindowFlags);
-		static float f = 0.0f;
-		static int counter = 0;
-		ImGui::Text("Hello, world!");                           // Display some text (you can use a format string too)
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
-		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our windows open/close state
-		ImGui::Checkbox("Another Window", &show_another_window);
-
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (NB: most widgets return true when edited/activated)
-			counter++;
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
-
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	}
 
 	// Kamera
 	glm::mat4 V = glm::lookAt(glm::vec3(camX, camY, camZ), glm::vec3(0.0f, 0.0f, 0.0f),
@@ -403,6 +433,7 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	//Models::cube.drawSolid();
 	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
 
+	/*
 	// Miejsce na mape
 
 	glm::mat4 M11 = glm::mat4(1.0f);
@@ -410,14 +441,17 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	M11 = glm::translate(M11, glm::vec3(1.5f, 0.21f, -0.5f));
 	M11 = glm::scale(M11, glm::vec3(0.15f, 0.15f, 0.15f));
 	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M11));
+
 	glEnableVertexAttribArray(spLambertTextured->a("vertex"));
 	glVertexAttribPointer(spLambertTextured->a("vertex"), 4, GL_FLOAT, false, 0, Models::placeForTower.vertices);
 	glEnableVertexAttribArray(spLambertTextured->a("normal"));
 	glVertexAttribPointer(spLambertTextured->a("normal"), 4, GL_FLOAT, false, 0, Models::placeForTower.normals);
 	glEnableVertexAttribArray(spLambertTextured->a("texCoord"));
 	glVertexAttribPointer(spLambertTextured->a("texCoord"), 2, GL_FLOAT, false, 0, Models::placeForTower.texCoords);
+
 	//glUniform4f(spLambertTextured->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
 	//Models::placeForTower.drawSolid();
+
 	glActiveTexture(GL_TEXTURE0); //zmieniac numery?
 	if(wybrana_wieza == 1) glBindTexture(GL_TEXTURE_2D, chosen);
 	else glBindTexture(GL_TEXTURE_2D, metal);
@@ -425,19 +459,6 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
 
 	// Miejsce na mape v2
-
-	glm::mat4 M12 = glm::mat4(1.0f);
-	M12 = glm::rotate(M12, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	M12 = glm::translate(M12, glm::vec3(-1.1f, 0.21f, 0.7f));
-	M12 = glm::scale(M12, glm::vec3(0.15f, 0.15f, 0.15f));
-	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M12));
-	//glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
-	//Models::placeForTower.drawSolid();
-	if (wybrana_wieza == 6) glBindTexture(GL_TEXTURE_2D, chosen);
-	else glBindTexture(GL_TEXTURE_2D, metal);
-	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
-
-	// Miejsce na mape v3
 
 	glm::mat4 M13 = glm::mat4(1.0f);
 	M13 = glm::rotate(M13, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -449,7 +470,8 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	if (wybrana_wieza == 2) glBindTexture(GL_TEXTURE_2D, chosen);
 	else glBindTexture(GL_TEXTURE_2D, metal);
 	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
-	// Miejsce na mape v4
+
+	// Miejsce na mape v3
 
 	glm::mat4 M14 = glm::mat4(1.0f);
 	M14 = glm::rotate(M14, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -461,6 +483,20 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	if (wybrana_wieza == 3) glBindTexture(GL_TEXTURE_2D, chosen);
 	else glBindTexture(GL_TEXTURE_2D, metal);
 	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
+
+	// Miejsce na mape v4
+
+	glm::mat4 M18 = glm::mat4(1.0f);
+	M18 = glm::rotate(M18, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M18 = glm::translate(M18, glm::vec3(-0.08f, 0.21f, -1.3f));
+	M18 = glm::scale(M18, glm::vec3(0.15f, 0.15f, 0.15f));
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M18));
+	//glUniform4f(spLambertTextured->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
+	//Models::placeForTower.drawSolid();
+	if (wybrana_wieza == 4) glBindTexture(GL_TEXTURE_2D, chosen);
+	else glBindTexture(GL_TEXTURE_2D, metal);
+	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
+
 	// Miejsce na mape v5
 
 	glm::mat4 M17 = glm::mat4(1.0f);
@@ -473,21 +509,89 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	if (wybrana_wieza == 5) glBindTexture(GL_TEXTURE_2D, chosen);
 	else glBindTexture(GL_TEXTURE_2D, metal);
 	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
+
 	// Miejsce na mape v6
 
-	glm::mat4 M18 = glm::mat4(1.0f);
-	M18 = glm::rotate(M18, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	M18 = glm::translate(M18, glm::vec3(-0.08f, 0.21f, -1.3f));
-	M18 = glm::scale(M18, glm::vec3(0.15f, 0.15f, 0.15f));
-	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M18));
-	//glUniform4f(spLambertTextured->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
+	glm::mat4 M12 = glm::mat4(1.0f);
+	M12 = glm::rotate(M12, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M12 = glm::translate(M12, glm::vec3(-1.1f, 0.21f, 0.7f));
+	M12 = glm::scale(M12, glm::vec3(0.15f, 0.15f, 0.15f));
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M12));
+	//glUniform4f(spLambert->u("color"), 0.3f, 0.5f, 0.7f, 1.0f);
 	//Models::placeForTower.drawSolid();
-	if (wybrana_wieza == 4) glBindTexture(GL_TEXTURE_2D, chosen);
+	if (wybrana_wieza == 6) glBindTexture(GL_TEXTURE_2D, chosen);
 	else glBindTexture(GL_TEXTURE_2D, metal);
 	glDrawArrays(GL_TRIANGLES, 0, Models::placeForTower.vertexCount);
 	glDisableVertexAttribArray(spLambertTextured->a("vertex"));
 	glDisableVertexAttribArray(spLambertTextured->a("normal"));
 	glDisableVertexAttribArray(spLambertTextured->a("texCoord"));
+	*/
+
+	wieze[0].rysuj(wybrana_wieza);
+	wieze[1].rysuj(wybrana_wieza);
+	wieze[2].rysuj(wybrana_wieza);
+	wieze[3].rysuj(wybrana_wieza);
+	wieze[4].rysuj(wybrana_wieza);
+	wieze[5].rysuj(wybrana_wieza);
+
+	ImGui_ImplGlfwGL3_NewFrame();
+	if (showWindow == true) {
+		{
+			std:string helper;
+			const char* c;
+
+			ImGui::Begin("Menu", nullptr); // Nazwa Frame'u
+			ImGui::SetWindowSize(ImVec2(430, 180));
+			ImGui::Text("Zycie: %d", hp_baza);
+			ImGui::Text("Zloto: %d", zloto);
+			ImGui::Text("Wybrana pozycja: %d", wybrana_wieza);
+
+			if (!wieze[wybrana_wieza - 1].getterKupionaWieza()) {
+
+				helper = "Kup wieze: " + std::to_string(wieze[wybrana_wieza - 1].getterKosztWiezy()) + " zlota"; //zmianic wartosc
+				c = helper.c_str();
+				if (ImGui::Button(c, ImVec2(200, 20)) && zloto >= wieze[wybrana_wieza - 1].getterKosztWiezy() && !wieze[wybrana_wieza - 1].getterKupionaWieza()) {
+					//warunek czy mozna wgl ulepszyc + zwiekszenie progressbar o 25%, max 100%
+					zloto -= wieze[wybrana_wieza - 1].getterKosztWiezy();
+					wieze[wybrana_wieza - 1].setterKupionaWieza();
+				}
+			}
+
+			if (wieze[wybrana_wieza - 1].getterIdZasieg() < 4) {
+
+				helper = "Ulepsz zasieg: " + std::to_string(wieze[wybrana_wieza - 1].getterKosztUlepszeniaZasieg()) + " zlota"; //zmianic wartosc
+				c = helper.c_str();
+				if (ImGui::Button(c, ImVec2(200, 20)) && wieze[wybrana_wieza - 1].getterKupionaWieza() && zloto >= wieze[wybrana_wieza - 1].getterKosztUlepszeniaZasieg()) {
+					zloto -= wieze[wybrana_wieza - 1].getterKosztUlepszeniaZasieg();
+					wieze[wybrana_wieza - 1].setterIdUlepszeniaZasieg();
+				}
+				ImGui::SameLine();
+				ImGui::ProgressBar(wieze[wybrana_wieza - 1].getterIdZasieg() * 0.25f, ImVec2(200, 0), NULL); //"zasieg: x"
+
+			}
+			else {
+				ImGui::ProgressBar(wieze[wybrana_wieza - 1].getterIdZasieg() * 0.25f, ImVec2(407, 0), NULL); //"zasieg: x"
+			}
+
+			if (wieze[wybrana_wieza - 1].getterIdObrazen() < 4) {
+				helper = "Ulepsz obrazenia: " + std::to_string(wieze[wybrana_wieza - 1].getterKosztUlepszeniaObrazen()) + " zlota"; //zmianic wartosc
+				c = helper.c_str();
+				if (ImGui::Button(c, ImVec2(200, 20)) && wieze[wybrana_wieza - 1].getterKupionaWieza() && zloto >= wieze[wybrana_wieza - 1].getterKosztUlepszeniaObrazen()) {
+					zloto -= wieze[wybrana_wieza - 1].getterKosztUlepszeniaObrazen();
+					wieze[wybrana_wieza - 1].setterIdUlepszeniaObrazen();
+				}
+				ImGui::SameLine();
+				ImGui::ProgressBar(wieze[wybrana_wieza - 1].getterIdObrazen() * 0.25, ImVec2(200, 0), NULL); // dac tekst "obrazenia: x"
+			}
+			else {
+				ImGui::ProgressBar(wieze[wybrana_wieza - 1].getterIdObrazen() * 0.25, ImVec2(407, 0), NULL); // dac tekst "obrazenia: x"
+
+			}
+
+			ImGui::Text("(%.1f FPS)", ImGui::GetIO().Framerate);
+			ImGui::End();
+		}
+	}
 
 	ogarniacz.robiSwoje(time, hp_baza);
 
@@ -531,8 +635,8 @@ int main(void)
 	//}
 	float time = 0;
 	float totaltime = 0;
-	int hp_baza = 25;
 	glfwSetTime(0);
+
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
 		float radius = 1.00f;

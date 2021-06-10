@@ -40,6 +40,7 @@
     <ClInclude Include="teapot.h" />
     <ClInclude Include="torus.h" />
     <ClInclude Include="tree.h" />
+    <ClInclude Include="wieza.h" />
     <ClInclude Include="woodenTowerWatch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +61,7 @@
     <ClCompile Include="teapot.cpp" />
     <ClCompile Include="torus.cpp" />
     <ClCompile Include="tree.cpp" />
+    <ClCompile Include="wieza.cpp" />
     <ClCompile Include="woodenTowerWatch.cpp" />
   </ItemGroup>
   <ItemGroup>
