@@ -27,14 +27,18 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <vector>
 #include<cmath>
+#include "mobki.h"
+#include "OgarniaczMobkow.h"
 #include "constants.h"
 #include "allmodels.h"
 #include "lodepng.h"
 #include "shaderprogram.h"
-
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw_gl3.h"
+
+using namespace std;
 
 //bool turnOffMenu = false; //jesli true, to wychodzimy z menu
 
@@ -54,6 +58,8 @@ GLuint stone;
 GLuint leaf;
 GLuint metal;
 GLuint chosen;
+
+OgarniaczMobkow ogarniacz = OgarniaczMobkow();
 
 int wybrana_wieza = 0;
 
@@ -176,7 +182,7 @@ void freeOpenGLProgram(GLFWwindow* window) {
 }
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window) {
+void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	ImGui_ImplGlfwGL3_NewFrame();
@@ -236,10 +242,10 @@ void drawScene(GLFWwindow* window) {
 	
 
 	//Drzewo
-	glm::mat4 M1 = M;
+	glm::mat4 M1 = glm::mat4(1.0f);
 	M1 = glm::rotate(M1, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	M1 = glm::translate(M1, glm::vec3(0.65f, 0.5f, -0.65f));
-	M1 = glm::scale(M1, glm::vec3(0.15f, 1.875f, 0.15f));
+	M1 = glm::translate(M1, glm::vec3(1.625f, 0.1f, -1.625f));
+	M1 = glm::scale(M1, glm::vec3(0.375, 0.375, 0.375));
 
 	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M1));
 	glEnableVertexAttribArray(spLambertTextured->a("vertex"));
@@ -322,10 +328,9 @@ void drawScene(GLFWwindow* window) {
 	//Models::rock.drawSolid();
 
 	// Droga --
-
-	glm::mat4 M6 = glm::mat4(1.0f);
+		glm::mat4 M6 = glm::mat4(1.0f);
+	M6 = glm::translate(M6, glm::vec3(1.90f, 0.195f, -0.8f));
 	M6 = glm::rotate(M6, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	M6 = glm::translate(M6, glm::vec3(0.8f, 0.195f, 1.90f));
 	M6 = glm::scale(M6, glm::vec3(0.1f, 0.05f, 0.6));
 	glUniform4f(spLambertTextured->u("color"), 1.0f, 1.0f, 0.0f, 1.0f);
 	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M6));
@@ -343,68 +348,60 @@ void drawScene(GLFWwindow* window) {
 	//Models::cube.drawSolid();
 
 	// Droga v2
-
-	glm::mat4 M7 = glm::mat4(1.0f);
-	M7 = glm::rotate(M7, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	M7 = glm::translate(M7, glm::vec3(-1.0f, 0.195f, -1.70f));
-	M7 = glm::scale(M7, glm::vec3(0.1f, 0.05f, 0.8));
-	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M7));
-	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
-	//Models::cube.drawSolid();
-	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
-	// Droga v3 --
-
-	glm::mat4 M8 = glm::mat4(1.0f);
-	M8 = glm::rotate(M8, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	M8 = glm::translate(M8, glm::vec3(-1.6f, 0.195f, 0.60f));
-	M8 = glm::scale(M8, glm::vec3(0.1f, 0.05f, 0.5f));
-	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M8));
-	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
-	//Models::cube.drawSolid();
-	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
-	// Droga v4 --
-
-	glm::mat4 M9 = glm::mat4(1.0f);
-	M9 = glm::rotate(M9, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	M9 = glm::translate(M9, glm::vec3(0.2f, 0.195f, -0.10f));
-	M9 = glm::scale(M9, glm::vec3(0.1f, 0.05f, 1.60f));
-	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M9));
-	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
-	//Models::cube.drawSolid();
-	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
-	// Droga v5 --
-
-	glm::mat4 M10 = glm::mat4(1.0f);
-	M10 = glm::rotate(M10, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::mat4 M10 = glm::mat4(1.0f);
 	M10 = glm::translate(M10, glm::vec3(1.2f, 0.195f, 0.4f));
 	M10 = glm::scale(M10, glm::vec3(0.1f, 0.05f, 1.3f));
 	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M10));
 	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
 	//Models::cube.drawSolid();
 	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
-	// Droga v6 --
 
-	glm::mat4 M15 = glm::mat4(1.0f);
+	// Droga v3 
+	glm::mat4 M8 = glm::mat4(1.0f);
+	M8 = glm::translate(M8, glm::vec3(0.60f, 0.195f, 1.6f));
+	M8 = glm::rotate(M8, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M8 = glm::scale(M8, glm::vec3(0.1f, 0.05f, 0.5f));
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M8));
+	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
+	//Models::cube.drawSolid();
+	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
+	
+	// Droga v4 --
+		glm::mat4 M9 = glm::mat4(1.0f);
+	M9 = glm::translate(M9, glm::vec3(0.2f, 0.195f, -0.10f));
+	M9 = glm::scale(M9, glm::vec3(0.1f, 0.05f, 1.60f));
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M9));
+	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
+	//Models::cube.drawSolid();
+	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
+	
+	// Droga v5 --
+		glm::mat4 M15 = glm::mat4(1.0f);
+	M15 = glm::translate(M15, glm::vec3(-0.4f, 0.195f, -1.6f));
 	M15 = glm::rotate(M15, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	M15 = glm::translate(M15, glm::vec3(1.6f, 0.195f, -0.4f));
 	M15 = glm::scale(M15, glm::vec3(0.1f, 0.05f, 0.5f));
 	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M15));
 	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
 	//Models::cube.drawSolid();
 	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
-	// Droga v7 --
 
+	// Droga v6 --
 	glm::mat4 M16 = glm::mat4(1.0f);
-	M16 = glm::rotate(M16, 0.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M16 = glm::translate(M16, glm::vec3(-0.8f, 0.195f, -0.2f));
 	M16 = glm::scale(M16, glm::vec3(0.1f, 0.05f, 1.3f));
 	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M16));
 	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
 	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
-	glDisableVertexAttribArray(spLambertTextured->a("vertex"));
-	glDisableVertexAttribArray(spLambertTextured->a("normal"));
-	glDisableVertexAttribArray(spLambertTextured->a("texCoord"));
+
+	// Droga v7 --
+	glm::mat4 M7 = glm::mat4(1.0f);
+	M7 = glm::translate(M7, glm::vec3(-1.70f, 0.195f, 1.0f));
+	M7 = glm::rotate(M7, 90.0f * PI / 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	M7 = glm::scale(M7, glm::vec3(0.1f, 0.05f, 0.8));
+	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M7));
+	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
 	//Models::cube.drawSolid();
+	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
 
 	// Miejsce na mape
 
@@ -492,6 +489,8 @@ void drawScene(GLFWwindow* window) {
 	glDisableVertexAttribArray(spLambertTextured->a("normal"));
 	glDisableVertexAttribArray(spLambertTextured->a("texCoord"));
 
+	ogarniacz.robiSwoje(time, hp_baza);
+
 	ImGui::Render();
 	ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -530,13 +529,18 @@ int main(void)
 	//while (!glfwWindowShouldClose(window) && !turnOffMenu) { // Menu
 
 	//}
+	float time = 0;
+	float totaltime = 0;
+	int hp_baza = 25;
 	glfwSetTime(0);
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
 		float radius = 1.00f;
 		camRotateX += speedCamX * radius; // o ile zmieniamy rotate
 		camRotateZ += speedCamZ * radius;  //raczej mozna usunac camRotateZ 
-		drawScene(window);
+		time = glfwGetTime() - totaltime;
+		totaltime += time;
+		drawScene(window, time, hp_baza);
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 	}
 

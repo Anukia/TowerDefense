@@ -30,7 +30,9 @@
     <ClInclude Include="imgui\stb_textedit.h" />
     <ClInclude Include="imgui\stb_truetype.h" />
     <ClInclude Include="lodepng.h" />
+    <ClInclude Include="Mobki.h" />
     <ClInclude Include="model.h" />
+    <ClInclude Include="OgarniaczMobkow.h" />
     <ClInclude Include="placeForTower.h" />
     <ClInclude Include="rock.h" />
     <ClInclude Include="shaderprogram.h" />
@@ -48,7 +50,9 @@
     <ClCompile Include="imgui\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="main_file.cpp" />
+    <ClCompile Include="Mobki.cpp" />
     <ClCompile Include="model.cpp" />
+    <ClCompile Include="OgarniaczMobkow.cpp" />
     <ClCompile Include="placeForTower.cpp" />
     <ClCompile Include="rock.cpp" />
     <ClCompile Include="shaderprogram.cpp" />
