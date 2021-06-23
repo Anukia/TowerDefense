@@ -100,7 +100,7 @@ int Wieza::getterKosztUlepszeniaZasieg(){
 
 
 void Wieza::setterIdUlepszeniaZasieg() {
-	if(idUlepszenieZasieg < 4) idUlepszenieZasieg++;
+	if(idUlepszenieZasieg < 5) idUlepszenieZasieg++;
 }
 
 int Wieza::getterKosztUlepszeniaObrazen() {
@@ -108,7 +108,7 @@ int Wieza::getterKosztUlepszeniaObrazen() {
 }
 
 void Wieza::setterIdUlepszeniaObrazen() {
-	if (idUlepszenieObrazen < 4) idUlepszenieObrazen++;
+	if (idUlepszenieObrazen < 5) idUlepszenieObrazen++;
 }
 
 int Wieza::getterIdZasieg() {
@@ -136,4 +136,33 @@ int Wieza::getterZasieg() {
 
 int Wieza::getterObrazenia() {
 	return obrazenia[idUlepszenieZasieg];
+}
+
+
+void Wieza::strzelanie(OgarniaczMobkow &ogarniacz, float czas) {
+	bool znaleziony = false;
+	int indeksCelu;
+	czasOdStrzalu += czas;
+	if (czasOdStrzalu > czasStrzelania) {
+		czasOdStrzalu -= czasStrzelania;
+		for (int i = 0; i < ogarniacz.mobki.size(); i++) {
+			if (sprawdzZasieg(ogarniacz.mobki[i].getx(), ogarniacz.mobki[i].getz())) {
+				indeksCelu = i;
+				znaleziony = true;
+				break;
+			}
+		}
+		if (znaleziony) {
+			ogarniacz.mobki[indeksCelu].odejmij_zycie(obrazenia[idUlepszenieObrazen]);
+		}
+	}
+}
+
+bool Wieza::sprawdzZasieg(float mobekX, float mobekZ) {
+	float lewaStrona = (x - mobekX) * (x - mobekX) + (y - mobekZ) * (y - mobekZ);
+	float prawaStrona = zasieg[idUlepszenieZasieg] * zasieg[idUlepszenieZasieg];
+	if (lewaStrona <= prawaStrona) {
+		return true;
+	}
+	return false;
 }

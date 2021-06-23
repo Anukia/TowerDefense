@@ -3,7 +3,10 @@
 #include <vector>
 class OgarniaczMobkow
 {
+public:
 	std::vector<Mobki> mobki;
+
+private:
 	float czasOdOstatniegoMobka;
 	int mobkiDoWyslania;
 	int hpMobkow;
@@ -57,7 +60,7 @@ public:
 		}
 	}
 
-	void robiSwoje(float time, int &hp_baza)
+	void robiSwoje(float time, int &hp_baza, int& zloto)
 	{
 		if (czasNaNowaRunde)
 		{
@@ -80,6 +83,17 @@ public:
 		for (int i = 0; i < mobki.size(); i++) {
 			if (hp_baza <= 0) time = 0;
 			mobki[i].poruszanie(time, mobki, i, hp_baza);
+			smierc(zloto);
+		}
+	}
+
+	void smierc(int& zloto) {
+		for (int i = 0; i < mobki.size(); i++) {
+			if (mobki[i].umarl == true) {
+				zloto += mobki[i].poziom * 15;
+				mobki.erase(mobki.begin() + i);
+				i--;
+			}
 		}
 	}
 };

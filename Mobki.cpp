@@ -18,6 +18,7 @@ Mobki::Mobki(int fhp, float fx, float fy, float fz, float fspeed) {
 	x = fx;
 	y = fy;
 	z = fz;
+	poziom = hp;
 }
 
 void Mobki::rysuj() {
@@ -80,4 +81,10 @@ void Mobki::doszedl(std::vector<Mobki>& mobki, int index, int& hp_baza)
 {
 	hp_baza -= hp;
 	mobki.erase(mobki.begin() + index);
+}
+
+void Mobki::odejmij_zycie(int ile) {
+	if (hp -= ile <= 0) {
+		umarl = true;
+	}
 }

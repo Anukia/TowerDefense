@@ -434,7 +434,11 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	glDisableVertexAttribArray(spLambertTextured->a("normal"));
 	glDisableVertexAttribArray(spLambertTextured->a("texCoord"));
 
-	ogarniacz.robiSwoje(time, hp_baza);
+	ogarniacz.robiSwoje(time, hp_baza, zloto);
+
+	for (int i = 0; i < 6; i++) {
+		if(wieze[i].getterKupionaWieza()) wieze[i].strzelanie(ogarniacz, time);
+	}
 
 	wieze[0].rysuj(wybrana_wieza);
 	wieze[1].rysuj(wybrana_wieza);

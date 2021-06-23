@@ -6,6 +6,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "OgarniaczMobkow.h"
+
 class Wieza {
 private:
 
@@ -22,8 +24,8 @@ private:
 	int idUlepszenieZasieg = 0;
 	int kosztUlepszeniaObrazen[4] = { 100, 250, 350, 500 };
 	int idUlepszenieObrazen = 0;
-	int zasieg[4] = { 100, 125, 150, 200 };
-	int obrazenia[4] = { 2, 3, 4, 5 };
+	float zasieg[5] = { 2, 2.25, 2.5, 2.75, 3.0 };
+	int obrazenia[5] = { 1, 2, 3, 4, 5 };
 
 public:
 
@@ -45,4 +47,8 @@ public:
 	int getterObrazenia();
 	void setterZasieg();
 	void setterObrazenia();
+	void strzelanie(OgarniaczMobkow &ogarniacz, float czas);
+	bool sprawdzZasieg(float mobekX, float mobekZ);
+	float czasStrzelania = 1.1f;
+	float czasOdStrzalu = 0.0f;
 };
