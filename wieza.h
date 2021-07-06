@@ -24,7 +24,7 @@ private:
 	int idUlepszenieZasieg = 0;
 	int kosztUlepszeniaObrazen[4] = { 100, 250, 350, 500 };
 	int idUlepszenieObrazen = 0;
-	float zasieg[5] = {0.75f, 1.0, 1.25, 1.5, 1.75 };
+	float zasieg[5] = { 0.75f, 1.0, 1.25, 1.5, 1.75 };
 	int obrazenia[5] = { 1, 2, 3, 4, 5 };
 
 public:
@@ -47,7 +47,7 @@ public:
 	int getterObrazenia();
 	void setterZasieg();
 	void setterObrazenia();
-	void strzelanie(OgarniaczMobkow &ogarniacz, float czas);
+	void strzelanie(OgarniaczMobkow& ogarniacz, float czas);
 	bool sprawdzZasieg(float mobekX, float mobekZ);
 	float czasStrzelania = 1.1f;
 	float czasOdStrzalu = 0.0f;

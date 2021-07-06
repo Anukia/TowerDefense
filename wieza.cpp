@@ -94,13 +94,13 @@ void Wieza::rysuj(int wybranaWieza) {
 	}
 
 }
-int Wieza::getterKosztUlepszeniaZasieg(){
+int Wieza::getterKosztUlepszeniaZasieg() {
 	return kosztUlepszeniaZasieg[idUlepszenieZasieg];
 }
 
 
 void Wieza::setterIdUlepszeniaZasieg() {
-	if(idUlepszenieZasieg < 5) idUlepszenieZasieg++;
+	if (idUlepszenieZasieg < 5) idUlepszenieZasieg++;
 }
 
 int Wieza::getterKosztUlepszeniaObrazen() {
@@ -139,7 +139,7 @@ int Wieza::getterObrazenia() {
 }
 
 
-void Wieza::strzelanie(OgarniaczMobkow &ogarniacz, float czas) {
+void Wieza::strzelanie(OgarniaczMobkow& ogarniacz, float czas) {
 	bool znaleziony = false;
 	int indeksCelu;
 	czasOdStrzalu += czas;

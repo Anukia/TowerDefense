@@ -51,7 +51,7 @@ public:
 			speedMobkow = 0.3f;
 			czasPomiedzyMobkami = 1.0f;
 			break;
-			
+
 		case 2:
 			speedMobkow = 0.3f;
 			czasPomiedzyMobkami = 1.0f;
@@ -60,7 +60,7 @@ public:
 			mobkiDoWyslania.push_back(10);
 			hpMobkow.push_back(2);
 			break;
-			
+
 		default:
 			mobkiDoWyslania.push_back(0);
 			hpMobkow.push_back(1);
@@ -70,7 +70,7 @@ public:
 		}
 	}
 
-	void robiSwoje(float time, int &hp_baza, int& zloto)
+	void robiSwoje(float time, int& hp_baza, int& zloto)
 	{
 		if (czasNaNowaRunde)
 		{
@@ -112,4 +112,3 @@ public:
 		}
 	}
 };
-

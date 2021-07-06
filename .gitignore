@@ -386,3 +386,6 @@ FodyWeavers.xsd
 # JetBrains Rider
 .idea/
 *.sln.iml
+/glm/out/build/x64-Debug (domyślnie)/.cmake/api/v1
+/glm/out/build/x64-Debug (domyślnie)/CMakeFiles
+/glm/out/build/x64-Debug (domyślnie)
