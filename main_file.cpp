@@ -69,6 +69,7 @@ GLuint leaf;
 GLuint metal;
 GLuint chosen;
 GLuint tower;
+GLuint colors[5];
 
 OgarniaczMobkow ogarniacz = OgarniaczMobkow();
 Wieza wieze[6] = { Wieza(), Wieza(), Wieza(), Wieza(), Wieza(), Wieza() };
@@ -193,6 +194,11 @@ void initOpenGLProgram(GLFWwindow* window) {
 	metal = readTexture("metal.png");
 	chosen = readTexture("yellow.png");
 	tower = readTexture("tower.png");
+	colors[0] = readTexture("blue.png");
+	colors[1] = readTexture("green.png");
+	colors[2] = readTexture("yellow.png");
+	colors[3] = readTexture("orange.png");
+	colors[4] = readTexture("red.png");
 	glClearColor(0.0f, 0.0f, 0.0f, 1);
 	glEnable(GL_DEPTH_TEST);
 
@@ -221,6 +227,11 @@ void freeOpenGLProgram(GLFWwindow* window) {
 	glDeleteTextures(1, &leaf);
 	glDeleteTextures(1, &metal);
 	glDeleteTextures(1, &chosen);
+	glDeleteTextures(1, &colors[0]);
+	glDeleteTextures(1, &colors[1]);
+	glDeleteTextures(1, &colors[2]);
+	glDeleteTextures(1, &colors[3]);
+	glDeleteTextures(1, &colors[4]);
 
 	ImGui_ImplGlfwGL3_Shutdown();
 	ImGui::DestroyContext();
@@ -434,7 +445,7 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	glDisableVertexAttribArray(spLambertTextured->a("normal"));
 	glDisableVertexAttribArray(spLambertTextured->a("texCoord"));
 
-	ogarniacz.robiSwoje(time, hp_baza, zloto);
+	ogarniacz.robiSwoje(time, hp_baza, zloto, colors);
 
 	for (int i = 0; i < 6; i++) {
 		if(wieze[i].getterKupionaWieza()) wieze[i].strzelanie(ogarniacz, time);

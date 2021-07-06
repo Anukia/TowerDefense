@@ -15,8 +15,8 @@ public:
 	int poziom;
 	bool umarl = false;
 	Mobki(int fhp, float fx, float fy, float fz, float fspeed);
-	void rysuj();
-	void poruszanie(float time, std::vector<Mobki>& mobki, int index, int& hp_baza);
+	void rysuj(GLuint* colors);
+	void poruszanie(float time, std::vector<Mobki>& mobki, int index, int& hp_baza, GLuint* colors);
 	void doszedl(std::vector<Mobki>& mobki, int index, int& hp_baza);
 	void odejmij_zycie(int ile);
 	float getx() { return x; };

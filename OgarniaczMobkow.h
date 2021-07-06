@@ -29,7 +29,7 @@ public:
 		czasOdOstatniejRundy = 0.0f;
 	}
 
-	void wysylanieMobkow(float time, int hp_baza)
+	void wysylanieMobkow(float time, int hp_baza, GLuint* colors)
 	{
 		czasOdOstatniegoMobka += time;
 		if (czasOdOstatniegoMobka > czasPomiedzyMobkami)
@@ -37,7 +37,7 @@ public:
 			czasOdOstatniegoMobka -= czasPomiedzyMobkami;
 			Mobki mobek = Mobki(hpMobkow[0], 2.4f, 0.195f, -0.8f, speedMobkow);
 			mobki.push_back(mobek);
-			mobki[mobki.size() - 1].poruszanie(czasOdOstatniegoMobka, mobki, mobki.size() - 1, hp_baza);
+			mobki[mobki.size() - 1].poruszanie(czasOdOstatniegoMobka, mobki, mobki.size() - 1, hp_baza, colors);
 			mobkiDoWyslania[0]--;
 		}
 	}
@@ -58,7 +58,7 @@ public:
 			mobkiDoWyslania.push_back(10);
 			hpMobkow.push_back(1);
 			mobkiDoWyslania.push_back(10);
-			hpMobkow.push_back(2);
+			hpMobkow.push_back(5);
 			break;
 
 		default:
@@ -70,7 +70,7 @@ public:
 		}
 	}
 
-	void robiSwoje(float time, int& hp_baza, int& zloto)
+	void robiSwoje(float time, int& hp_baza, int& zloto, GLuint * colors)
 	{
 		if (czasNaNowaRunde)
 		{
@@ -81,7 +81,7 @@ public:
 		}
 		if (mobkiDoWyslania.size() > 0 && mobkiDoWyslania[0] > 0)
 		{
-			wysylanieMobkow(time, hp_baza);
+			wysylanieMobkow(time, hp_baza, colors);
 		}
 		else if (mobkiDoWyslania.size() > 0)
 		{
@@ -97,7 +97,7 @@ public:
 		}
 		for (int i = 0; i < mobki.size(); i++) {
 			if (hp_baza <= 0) time = 0;
-			mobki[i].poruszanie(time, mobki, i, hp_baza);
+			mobki[i].poruszanie(time, mobki, i, hp_baza, colors);
 			smierc(zloto);
 		}
 	}
