@@ -14,11 +14,12 @@ using namespace glm;
 
 Mobki::Mobki(int fhp, float fx, float fy, float fz, float fspeed) {
 	hp = fhp;
+	punkty = fhp;
 	speed = fspeed;
 	x = fx;
 	y = fy;
 	z = fz;
-	poziom = hp;
+	poziom = fhp;
 }
 
 void Mobki::rysuj(GLuint* colors) {

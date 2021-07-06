@@ -8,7 +8,7 @@
 
 class Mobki
 {
-	int hp;
+	int hp, punkty;
 	float x, y, z, speed;
 
 public:
@@ -22,4 +22,5 @@ public:
 	float getx() { return x; };
 	float gety() { return y; };
 	float getz() { return z; };
+	int getPunkty() { return punkty; }
 };

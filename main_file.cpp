@@ -58,8 +58,8 @@ float speedCamZ = 0;
 float fov = 120;
 float camRotateX = 0;
 float camRotateZ = 0;  //raczej mozna usunac camRotateZ
-int zloto = 100000;
-int hp_baza = 25;
+int zloto = 250;
+int hp_baza = 1;
 bool showWindow = true;
 
 GLuint grass;
@@ -115,13 +115,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			if (showWindow == false) showWindow = true;
 			else showWindow = false;
 		}
-		if (key == GLFW_KEY_1) wybrana_wieza = 1;
-		if (key == GLFW_KEY_2) wybrana_wieza = 2;
-		if (key == GLFW_KEY_3) wybrana_wieza = 3;
-		if (key == GLFW_KEY_4) wybrana_wieza = 4;
-		if (key == GLFW_KEY_5) wybrana_wieza = 5;
-		if (key == GLFW_KEY_6) wybrana_wieza = 6;
-		if (key == GLFW_KEY_Z) {
+		if (key == GLFW_KEY_1 && hp_baza > 0) wybrana_wieza = 1;
+		if (key == GLFW_KEY_2 && hp_baza > 0) wybrana_wieza = 2;
+		if (key == GLFW_KEY_3 && hp_baza > 0) wybrana_wieza = 3;
+		if (key == GLFW_KEY_4 && hp_baza > 0) wybrana_wieza = 4;
+		if (key == GLFW_KEY_5 && hp_baza > 0) wybrana_wieza = 5;
+		if (key == GLFW_KEY_6 && hp_baza > 0) wybrana_wieza = 6;
+		if (key == GLFW_KEY_Z && hp_baza > 0) {
 
 			std::string helper = "Kup wieze: " + std::to_string(wieze[wybrana_wieza - 1].getterKosztWiezy()) + " zlota"; //zmianic wartosc
 			const char* c = helper.c_str();
@@ -131,7 +131,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			}
 
 		}
-		if (key == GLFW_KEY_X) {
+		if (key == GLFW_KEY_X && hp_baza > 0) {
 
 			if (wieze[wybrana_wieza - 1].getterIdZasieg() < 4) {
 
@@ -144,7 +144,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			}
 
 		}
-		if (key == GLFW_KEY_C) {
+		if (key == GLFW_KEY_C && hp_baza > 0) {
 
 			if (wieze[wybrana_wieza - 1].getterIdObrazen() < 4) {
 				std::string helper = "Ulepsz obrazenia: " + std::to_string(wieze[wybrana_wieza - 1].getterKosztUlepszeniaObrazen()) + " zlota"; //zmianic wartosc
@@ -448,25 +448,20 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	ogarniacz.robiSwoje(time, hp_baza, zloto, colors);
 
 	for (int i = 0; i < 6; i++) {
-		if(wieze[i].getterKupionaWieza()) wieze[i].strzelanie(ogarniacz, time);
+		if(wieze[i].getterKupionaWieza() && hp_baza > 0) wieze[i].strzelanie(ogarniacz, time);
+		wieze[i].rysuj(wybrana_wieza);
 	}
-
-	wieze[0].rysuj(wybrana_wieza);
-	wieze[1].rysuj(wybrana_wieza);
-	wieze[2].rysuj(wybrana_wieza);
-	wieze[3].rysuj(wybrana_wieza);
-	wieze[4].rysuj(wybrana_wieza);
-	wieze[5].rysuj(wybrana_wieza);
 
 
 	ImGui_ImplGlfwGL3_NewFrame();
-	if (showWindow == true) {
+	if (showWindow == true && hp_baza > 0) {
 		{
 			std::string helper;
 			const char* c;
-
 			ImGui::Begin("Menu", nullptr); // Nazwa Frame'u
-			ImGui::SetWindowSize(ImVec2(430, 180));
+			ImGui::SetWindowSize(ImVec2(430, 210));
+			ImGui::Text("Runda: %d", ogarniacz.getRunda() - 1);
+			ImGui::Text("Punkty: %d", ogarniacz.getPunkty());
 			ImGui::Text("Zycie: %d", hp_baza);
 			ImGui::Text("Zloto: %d", zloto);
 			ImGui::Text("Wybrana pozycja: %d", wybrana_wieza);
@@ -516,6 +511,17 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 			ImGui::Text("(%.1f FPS)", ImGui::GetIO().Framerate);
 			ImGui::End();
 		}
+	}
+	else if(hp_baza <= 0){
+		showWindow = true;
+		ImGui::Begin("Przegrales!", nullptr); // Nazwa Frame'u
+		ImGui::SetWindowSize(ImVec2(430, 210));
+		ImGui::Text("Runda: %d", ogarniacz.getRunda() - 1);
+		ImGui::Text("Punkty: %d", ogarniacz.getPunkty());
+		ImGui::Text("Zycie: %d", 0);
+		ImGui::Text("Zloto: %d", zloto);
+		ImGui::Text("(%.1f FPS)", ImGui::GetIO().Framerate);
+		ImGui::End();
 	}
 
 
