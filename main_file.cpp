@@ -209,6 +209,22 @@ void initOpenGLProgram(GLFWwindow* window) {
 	wieze[4] = Wieza(-0.5f, 0.21f, -1.3f, 0.15f, 0.15f, 0.15f, 0.075f, 0.075f, 0.075f, 5, metal, chosen, tower);
 	wieze[5] = Wieza(-1.1f, 0.21f, 0.7f, 0.15f, 0.15f, 0.15f, 0.075f, 0.075f, 0.075f, 6, metal, chosen, metal);
 
+	/* Światło
+	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+	GLfloat qaAmbientLight[] = { 0.2f,0.2f,0.2f,1.0f };
+	GLfloat qaDiffuseLight[] = { 0.8f,0.8f,0.8f,1.0f };
+	GLfloat qaSpecularLight[] = { 1.0f,1.0f,1.0f,1.0f };
+	glLightfv(GL_LIGHT0, GL_AMBIENT, qaAmbientLight);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, qaDiffuseLight);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, qaSpecularLight);
+
+	GLfloat qaLightPosition[] = { 1.0f,1.0f,1.0f,1.0f };
+	glLightfv(GL_LIGHT0, GL_POSITION, qaLightPosition);
+	*/
+
 	ImGui::CreateContext();
 	ImGui_ImplGlfwGL3_Init(window, true);
 	glfwSetKeyCallback(window, key_callback); // zainicjowanie funkcji
@@ -247,6 +263,16 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 		glm::vec3(0.0f, 1.0f, 0.0f));
 	V = glm::rotate(V, camRotateX, glm::vec3(0.0f, 1.0f, 0.0f)); // tutaj odbywa sie obrot
 	glm::mat4 P = glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 100.0f); // tutaj odbywa sie zoom
+
+	/* Światło
+	GLfloat qaBlack[] = { 0.0f,0.0f,0.0f,1.0f };
+	GLfloat qaGreen[] = { 0.0f,1.0f,0.0f,1.0f };
+	GLfloat qaWhite[] = { 0.0f,1.0f,1.0f,1.0f };
+	glMaterialfv(GL_FRONT, GL_AMBIENT, qaGreen);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, qaGreen);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, qaWhite);
+	glMaterialf(GL_FRONT, GL_SHININESS, 60.0f);
+	*/
 
 	//spLambert->use();
 	spLambertTextured->use(); //TODO nie mam pojecia jak korzystać z paru shaderów xD
