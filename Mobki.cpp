@@ -84,8 +84,7 @@ void Mobki::doszedl(std::vector<Mobki>& mobki, int index, int& hp_baza)
 }
 
 void Mobki::odejmij_zycie(int ile) {
-	hp -= ile;
-	if (hp  <= 0) {
+	if (hp -= ile <= 0) {
 		umarl = true;
 	}
 }

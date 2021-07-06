@@ -8,8 +8,8 @@ public:
 
 private:
 	float czasOdOstatniegoMobka;
-	std::vector<int> mobkiDoWyslania;
-	std::vector<int> hpMobkow;
+	int mobkiDoWyslania;
+	int hpMobkow;
 	float speedMobkow;
 	float czasPomiedzyMobkami;
 	int runda;
@@ -35,10 +35,10 @@ public:
 		if (czasOdOstatniegoMobka > czasPomiedzyMobkami)
 		{
 			czasOdOstatniegoMobka -= czasPomiedzyMobkami;
-			Mobki mobek = Mobki(hpMobkow[0], 2.4f, 0.195f, -0.8f, speedMobkow);
+			Mobki mobek = Mobki(hpMobkow, 2.4f, 0.195f, -0.8f, speedMobkow);
 			mobki.push_back(mobek);
 			mobki[mobki.size() - 1].poruszanie(czasOdOstatniegoMobka, mobki, mobki.size() - 1, hp_baza);
-			mobkiDoWyslania[0]--;
+			mobkiDoWyslania--;
 		}
 	}
 
@@ -46,24 +46,14 @@ public:
 		switch (runda)
 		{
 		case 1:
-			mobkiDoWyslania.push_back(10);
-			hpMobkow.push_back(1);
+			mobkiDoWyslania = 30;
+			hpMobkow = 1;
 			speedMobkow = 0.3f;
 			czasPomiedzyMobkami = 1.0f;
 			break;
-			
-		case 2:
-			speedMobkow = 0.3f;
-			czasPomiedzyMobkami = 1.0f;
-			mobkiDoWyslania.push_back(10);
-			hpMobkow.push_back(1);
-			mobkiDoWyslania.push_back(10);
-			hpMobkow.push_back(2);
-			break;
-			
 		default:
-			mobkiDoWyslania.push_back(0);
-			hpMobkow.push_back(1);
+			mobkiDoWyslania = 0;
+			hpMobkow = 1;
 			speedMobkow = 0.15f;
 			czasPomiedzyMobkami = 0.6f;
 			break;
@@ -79,14 +69,9 @@ public:
 			czasNaNowaRunde = false;
 			czasOdOstatniejRundy = 0.0f;
 		}
-		if (mobkiDoWyslania.size() > 0 && mobkiDoWyslania[0] > 0)
+		if (mobkiDoWyslania > 0)
 		{
 			wysylanieMobkow(time, hp_baza);
-		}
-		else if (mobkiDoWyslania.size() > 0)
-		{
-			mobkiDoWyslania.erase(mobkiDoWyslania.begin());
-			hpMobkow.erase(hpMobkow.begin());
 		}
 		else if (mobki.size() == 0) {
 			czasOdOstatniejRundy += time;
