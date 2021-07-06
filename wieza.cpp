@@ -159,9 +159,7 @@ void Wieza::strzelanie(OgarniaczMobkow &ogarniacz, float czas) {
 }
 
 bool Wieza::sprawdzZasieg(float mobekX, float mobekZ) {
-	float lewaStrona = (x - mobekX) * (x - mobekX) + (y - mobekZ) * (y - mobekZ);
-	float prawaStrona = zasieg[idUlepszenieZasieg] * zasieg[idUlepszenieZasieg];
-	if (lewaStrona <= prawaStrona) {
+	if ((x - mobekX) * (x - mobekX) + (z - mobekZ) * (z - mobekZ) <= zasieg[idUlepszenieZasieg] * zasieg[idUlepszenieZasieg]) {
 		return true;
 	}
 	return false;
