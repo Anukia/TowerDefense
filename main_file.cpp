@@ -69,6 +69,7 @@ GLuint leaf;
 GLuint metal;
 GLuint chosen;
 GLuint tower;
+GLuint sand;
 GLuint colors[5];
 
 OgarniaczMobkow ogarniacz = OgarniaczMobkow();
@@ -194,6 +195,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	metal = readTexture("metal.png");
 	chosen = readTexture("yellow.png");
 	tower = readTexture("tower.png");
+	sand = readTexture("sand.png");
 	colors[0] = readTexture("blue.png");
 	colors[1] = readTexture("green.png");
 	colors[2] = readTexture("yellow.png");
@@ -243,6 +245,7 @@ void freeOpenGLProgram(GLFWwindow* window) {
 	glDeleteTextures(1, &leaf);
 	glDeleteTextures(1, &metal);
 	glDeleteTextures(1, &chosen);
+	glDeleteTextures(1, &sand);
 	glDeleteTextures(1, &colors[0]);
 	glDeleteTextures(1, &colors[1]);
 	glDeleteTextures(1, &colors[2]);
@@ -402,12 +405,12 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	glEnableVertexAttribArray(spLambertTextured->a("normal"));
 	glVertexAttribPointer(spLambertTextured->a("normal"), 4, GL_FLOAT, false, 0, Models::cube.normals);
 
-	//glEnableVertexAttribArray(spLambertTextured->a("texCoord"));
-	//glVertexAttribPointer(spLambertTextured->a("texCoord"), 2, GL_FLOAT, false, 0, Models::cube.texCoords);
-	//glActiveTexture(GL_TEXTURE0); //zmieniac numery?
-	//glBindTexture(GL_TEXTURE_2D, pavement);
-	//glUniform1i(spLambertTextured->u("tex"), 0);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glEnableVertexAttribArray(spLambertTextured->a("texCoord"));
+	glVertexAttribPointer(spLambertTextured->a("texCoord"), 2, GL_FLOAT, false, 0, Models::cube.texCoords);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, sand);
+	glUniform1i(spLambertTextured->u("tex"), 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 
 	glDrawArrays(GL_TRIANGLES, 0, Models::cube.vertexCount);
 	//Models::cube.drawSolid();
