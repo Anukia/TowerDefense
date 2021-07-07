@@ -19,12 +19,12 @@ private:
 	GLuint metal;
 	GLuint chosen;
 	GLuint tower;
-	int kosztWiezy = 50;
+	int kosztWiezy = 100;
 	int kosztUlepszeniaZasieg[4] = { 50, 75, 100, 200 };
 	int idUlepszenieZasieg = 0;
 	int kosztUlepszeniaObrazen[4] = { 100, 250, 350, 500 };
 	int idUlepszenieObrazen = 0;
-	float zasieg[5] = { 0.75f, 1.0, 1.25, 1.5, 1.75 };
+	float zasieg[5] = { 0.75f, 1.0f, 1.5f, 1.75f, 2.0 };
 	int obrazenia[5] = { 1, 2, 3, 4, 5 };
 
 public:

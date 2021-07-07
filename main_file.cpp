@@ -59,7 +59,7 @@ float fov = 120;
 float camRotateX = 0;
 float camRotateZ = 0;  //raczej mozna usunac camRotateZ
 int zloto = 250;
-int hp_baza = 1;
+int hp_baza = 25;
 bool showWindow = true;
 
 GLuint grass;

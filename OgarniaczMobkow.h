@@ -130,9 +130,9 @@ public:
 		case 10:
 			speedMobkow = 1.0f;
 			czasPomiedzyMobkami = 0.3f;
-			mobkiDoWyslania.push_back(15);
+			mobkiDoWyslania.push_back(12);
 			hpMobkow.push_back(3);
-			mobkiDoWyslania.push_back(15);
+			mobkiDoWyslania.push_back(12);
 			hpMobkow.push_back(2);
 			break;
 
@@ -163,20 +163,20 @@ public:
 
 				mobkiDoWyslania.push_back(endlessGameMobki[i]);
 				hpMobkow.push_back(i + 1);
-				if (runda % 3 == 1 && i < 2) {
+				if (runda % 3 == 1 && i >= 2) {
 					endlessGameMobki[i]++;
 				}
-				if (runda % 3 == 2 && i < 3) {
+				if (runda % 3 == 2 && i >= 3) {
 					endlessGameMobki[i]++;
 				}
-				if (runda % 3 == 0 && i < 4) {
+				if (runda % 3 == 0 && i >= 4) {
 					endlessGameMobki[i]++;
 				}
 
 			}
 
-			endlessGameUstawienia[0] += 0.03f;
-			endlessGameUstawienia[0] -= 0.02f;
+			endlessGameUstawienia[0] += 0.04f;
+			endlessGameUstawienia[0] -= 0.03f;
 
 			break;
 		}
@@ -217,7 +217,7 @@ public:
 	void smierc(int& zloto) {
 		for (int i = 0; i < mobki.size(); i++) {
 			if (mobki[i].umarl == true) {
-				zloto += mobki[i].poziom * 2;
+				zloto += mobki[i].poziom * 2 + 1;
 				punkty += mobki[i].getPunkty();
 				mobki.erase(mobki.begin() + i);
 				i--;
