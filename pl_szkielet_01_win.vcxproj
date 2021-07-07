@@ -66,14 +66,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="f_constant.glsl" />
-    <None Include="f_lambert.glsl" />
     <None Include="f_lamberttextured.glsl" />
-    <None Include="f_textured.glsl" />
-    <None Include="v_constant.glsl" />
-    <None Include="v_lambert.glsl" />
     <None Include="v_lamberttextured.glsl" />
-    <None Include="v_textured.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

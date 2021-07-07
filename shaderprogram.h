@@ -43,11 +43,6 @@ public:
 	GLuint a(const char* variableName); //Pobiera numer slotu związanego z danym atrybutem
 };
 
-
-extern ShaderProgram* spConstant;
-extern ShaderProgram* spLambert;
-extern ShaderProgram* spTextured;
-//extern ShaderProgram* spColored;
 extern ShaderProgram* spLambertTextured;
 
 

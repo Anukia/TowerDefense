@@ -24,7 +24,7 @@ private:
 	int idUlepszenieZasieg = 0;
 	int kosztUlepszeniaObrazen[4] = { 100, 250, 350, 500 };
 	int idUlepszenieObrazen = 0;
-	float zasieg[5] = { 0.75f, 1.0f, 1.5f, 1.75f, 2.0 };
+	float zasieg[5] = { 0.75f, 1.0f, 1.25f, 1.5f, 1.75f };
 	int obrazenia[5] = { 1, 2, 3, 4, 5 };
 
 public:
