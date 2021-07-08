@@ -63,7 +63,6 @@ int hp_baza = 25;
 bool showWindow = true;
 
 GLuint grass;
-GLuint pavement;
 GLuint stone;
 GLuint leaf;
 GLuint metal;
@@ -190,7 +189,6 @@ void initOpenGLProgram(GLFWwindow* window) {
     initShaders();
 	grass = readTexture("grass.png");
 	stone = readTexture("stone.png");
-	pavement = readTexture("pavement.png");
 	leaf = readTexture("leafv2.png");
 	metal = readTexture("metal.png");
 	chosen = readTexture("yellow.png");
@@ -241,7 +239,6 @@ void freeOpenGLProgram(GLFWwindow* window) {
     freeShaders();
 	glDeleteTextures(1, &grass);
 	glDeleteTextures(1, &stone);
-	glDeleteTextures(1, &pavement);
 	glDeleteTextures(1, &leaf);
 	glDeleteTextures(1, &metal);
 	glDeleteTextures(1, &chosen);
