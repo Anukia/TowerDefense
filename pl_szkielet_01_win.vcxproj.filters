@@ -145,12 +145,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="f_lamberttextured.glsl">
-      <Filter>Pliki zasobów</Filter>
-    </None>
-    <None Include="v_lamberttextured.glsl">
-      <Filter>Pliki zasobów</Filter>
-    </None>
     <None Include=".gitignore" />
+    <None Include="f_shader.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
+    <None Include="v_shader.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
   </ItemGroup>
 </Project>

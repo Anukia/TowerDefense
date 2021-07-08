@@ -31,7 +31,7 @@ void initShaders(){
 	//spConstant = new ShaderProgram("v_constant.glsl", NULL, "f_constant.glsl");
 	//spTextured = new ShaderProgram("v_textured.glsl", NULL, "f_textured.glsl");
 	//spColored = new ShaderProgram("v_colored.glsl", NULL, "f_colored.glsl");
-	spLambertTextured = new ShaderProgram("v_lamberttextured.glsl", NULL, "f_lamberttextured.glsl");
+	spLambertTextured = new ShaderProgram("v_shader.glsl", NULL, "f_shader.glsl");
 }
 
 void freeShaders(){

@@ -5,8 +5,8 @@ uniform mat4 P;
 uniform mat4 V;
 uniform mat4 M;
 
-
-uniform vec4 lightDir=vec4(5,5,3,0);
+//Pozycja èrÛde≥ úwiat≥a
+uniform vec4 lightDir=vec4(5,10,3,0);
 uniform vec4 lightDir2=vec4(-5,10,5,0);
 
 //Atrybuty
@@ -23,8 +23,6 @@ out vec2 i_tc;
 out float i_nl;
 out float i_nl2;
 
-
-
 void main(void) {
     gl_Position=P*V*M*vertex;
 
@@ -35,7 +33,7 @@ void main(void) {
     mat4 G=mat4(inverse(transpose(mat3(M))));
     vec4 n=normalize(V*G*normal);
 
-    i_nl=clamp(dot(n,lightDir),0,1);
+    i_nl=clamp(dot(n,lightDir),0,1); //dot - iloczyn skalarny
     i_nl2=clamp(dot(n,lightDir2),0,1);
     i_tc=texCoord;
 }

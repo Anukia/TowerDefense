@@ -320,9 +320,8 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	glVertexAttribPointer(spLambertTextured->a("normal"), 4, GL_FLOAT, false, 0, Models::tree.normals);
 	glEnableVertexAttribArray(spLambertTextured->a("texCoord"));
 	glVertexAttribPointer(spLambertTextured->a("texCoord"), 2, GL_FLOAT, false, 0, Models::tree.texCoords);
-	//glUniform4f(spLambertTextured->u("color"), 0.6f, 0.98f, 0.6f, 1.0f);
 
-	glActiveTexture(GL_TEXTURE0); //zmieniac numery?
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, leaf);
 	glUniform1i(spLambertTextured->u("tex"), 0);
 	glDrawArrays(GL_TRIANGLES, 0, Models::tree.vertexCount);
@@ -336,7 +335,6 @@ void drawScene(GLFWwindow* window, float time, int &hp_baza) {
 	M5 = glm::translate(M5, glm::vec3(-0.70f, -0.5f, 0.70f));
 	M5 = glm::scale(M5, glm::vec3(0.15f, 1.875f, 0.15f));
 	glUniformMatrix4fv(spLambertTextured->u("M"), 1, false, glm::value_ptr(M5));
-	//glUniform4f(spLambert->u("color"), 0.0f, 0.5f, 0.0f, 1.0f);
 
 	glDrawArrays(GL_TRIANGLES, 0, Models::tree.vertexCount);
 	glDisableVertexAttribArray(spLambertTextured->a("vertex"));

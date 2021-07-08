@@ -66,8 +66,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="f_lamberttextured.glsl" />
-    <None Include="v_lamberttextured.glsl" />
+    <None Include="f_shader.glsl" />
+    <None Include="v_shader.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
